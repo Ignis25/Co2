@@ -3,6 +3,9 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+if page == pages[0] : 
+  st.write("### Introduction")
+
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 st.sidebar.title("Sommaire")
