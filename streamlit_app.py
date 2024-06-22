@@ -3,12 +3,11 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-if page == pages[0] : 
-  st.write("### Introduction")
 
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 st.sidebar.title("Sommaire")
-pages["Présentation du Projet", "Data Visualisation", "Machine Learning", "Résultats"]
+pages=["Présentation du Projet", "Data Visualisation", "Machine Learning", "Résultats"]
+page=st.sidebar.radio("Aller vers", pages)
 if st.checkbox("Afficher"):
   st.write("Suite du Streamlit")
