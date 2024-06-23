@@ -6,7 +6,7 @@ import seaborn as sns
 import webbrowser
 webbrowser.open('http://streamlit.io')
 
-donnees2013 = pd.read_csv('C:\Users\arnaud.colombel\Downloads\2013_data.csv', sep = ';', encoding = 'latin-1')
+donnees2013 = pd.read_csv('C:\Users\arnaud.colombel\Downloads\2013_data.csv', sep = ';')
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 st.sidebar.title("Sommaire")
