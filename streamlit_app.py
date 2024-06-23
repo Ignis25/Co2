@@ -17,3 +17,14 @@ if st.checkbox("Afficher"):
 
 if page == page[1]:
   st.write("### Data Visualisation")
+
+fig = sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=donnees2013, palette='Set2')
+plt.title("Distribution de l'âge des passagers")
+plt.title('Distribution des émissions de CO2 par type de carburant')
+plt.xlabel('Type de carburant')
+plt.ylabel('Émissions de CO2 (g/km)')
+plt.xticks(rotation=45)
+st.pyplot(fig)
+
+plt.figure(figsize=(10, 6))
+
