@@ -6,8 +6,12 @@ import seaborn as sns
 import webbrowser
 webbrowser.open('http://streamlit.io')
 url = 'https://github.com/Ignis25/Co2/blob/b43b8a994daaaadd910854d51f7ba9ef7688bc24/2013_data.csv'
-donnees2013 = pd.read_csv(url, sep=';', encoding='utf-8', error_bad_lines=False, low_memory=False)
 
+try:
+    donnees2013 = pd.read_csv(url, sep=';', encoding='utf-8', on_bad_lines='skip', low_memory=False)
+    # Afficher les données
+    st.write("Voici les données du fichier CSV :")
+    st.dataframe(donnees2013)
 
 
 st.title("Projet Co2")
