@@ -14,4 +14,4 @@ if st.checkbox("Afficher"):
   st.write("Suite du Streamlit")
 
 if page == page[1]:
-st.write("### Data Visualisation")
+  st.write("### Data Visualisation")
