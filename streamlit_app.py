@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-
+donnees2013 = pd.read_csv('/content/drive/MyDrive/Projet_Co2/2013_data.csv', sep = ';', encoding = 'latin-1')
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 st.sidebar.title("Sommaire")
