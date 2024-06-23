@@ -15,6 +15,9 @@ pages=["Présentation du Projet", "Data Visualisation", "Machine Learning", "Ré
 page=st.sidebar.radio("Aller vers", pages)
 if st.checkbox("Afficher"):
   st.write("Suite du Streamlit")
+  
+if page == page[0]
+st.dataframe(donnees2013.head(10))
 
 if page == page[1]:
   st.write("### Data Visualisation")
