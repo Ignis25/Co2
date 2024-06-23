@@ -7,12 +7,27 @@ import webbrowser
 webbrowser.open('http://streamlit.io')
 url = 'https://github.com/Ignis25/Co2/blob/b43b8a994daaaadd910854d51f7ba9ef7688bc24/2013_data.csv'
 
+# Essayer de lire le fichier CSV avec différents paramètres
 try:
-    donnees2013 = pd.read_csv(url, sep=';', encoding='utf-8', on_bad_lines='skip', low_memory=False)
+    df = pd.read_csv(url, sep=';', encoding='utf-8', on_bad_lines='skip', low_memory=False)
     # Afficher les données
     st.write("Voici les données du fichier CSV :")
-    st.dataframe(donnees2013)
+    st.dataframe(df)
 
+    # Afficher quelques statistiques sur les données
+    st.write("Résumé statistique :")
+    st.write(df.describe())
+
+    # Afficher les premières lignes du fichier CSV
+    st.write("Premières lignes du fichier CSV :")
+    st.write(df.head())
+except pd.errors.ParserError as e:
+    st.error(f"Erreur lors de la lecture du fichier CSV : {e}")
+    st.stop()
+except Exception as e:
+    st.error(f"Une erreur est survenue : {e}")
+    st.stop()
+##
 
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
