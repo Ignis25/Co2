@@ -6,7 +6,7 @@ import seaborn as sns
 import webbrowser
 webbrowser.open('http://streamlit.io')
 url = 'https://github.com/Ignis25/Co2/blob/b43b8a994daaaadd910854d51f7ba9ef7688bc24/2013_data.csv'
-donnees2013 = pd.read_csv('url', sep=';')
+donnees2013 = pd.read_csv(url, sep=';')
 
 
 st.title("Projet Co2")
