@@ -38,12 +38,12 @@ if st.checkbox("Afficher"):
   st.write("Suite du Streamlit")
   
 if page == page[0]:
-  st.dataframe(donnees2013.head(10))
+  st.dataframe(url.head(10))
 
 if page == page[1]:
   st.write("### Data Visualisation")
 
-fig = sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=donnees2013, palette='Set2')
+fig = sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=url, palette='Set2')
 plt.title("Distribution de l'âge des passagers")
 plt.title('Distribution des émissions de CO2 par type de carburant')
 plt.xlabel('Type de carburant')
