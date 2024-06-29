@@ -62,5 +62,4 @@ plt.ylabel('Émissions de CO2 (g/km)')
 plt.xticks(rotation=45)
 st.pyplot(fig)
 
-plt.figure(figsize=(10, 6))
 
