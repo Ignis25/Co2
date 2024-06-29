@@ -4,6 +4,9 @@ import numpy as np
 import seaborn as sns
 import chardet
 
+st.title('Lire un fichier CSV')
+
+# Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
 if uploaded_file is not None:
@@ -35,6 +38,7 @@ if uploaded_file is not None:
         st.stop()
 else:
     st.write("Veuillez télécharger un fichier CSV pour continuer.")
+
     
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
