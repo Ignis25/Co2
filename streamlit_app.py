@@ -3,10 +3,31 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file is not None :
-  df = pd.read_csv(uploaded_file)
-  st.write(dataframe)
+uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
+
+if uploaded_file is not None:
+    try:
+        # Lire le fichier CSV
+        df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8', on_bad_lines='skip', low_memory=False)
+        # Afficher les données
+        st.write("Voici les données du fichier CSV :")
+        st.dataframe(df)
+        
+        # Afficher quelques statistiques sur les données
+        st.write("Résumé statistique :")
+        st.write(df.describe())
+        
+        # Afficher les premières lignes du fichier CSV
+        st.write("Premières lignes du fichier CSV :")
+        st.write(df.head())
+    except pd.errors.ParserError as e:
+        st.error(f"Erreur lors de la lecture du fichier CSV : {e}")
+        st.stop()
+    except Exception as e:
+        st.error(f"Une erreur est survenue : {e}")
+        st.stop()
+else:
+    st.write("Veuillez télécharger un fichier CSV pour continuer.")
 
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
