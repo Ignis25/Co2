@@ -39,7 +39,7 @@ st.sidebar.title("Sommaire")
 pages=["Présentation du Projet", "Data Visualisation", "Machine Learning", "Résultats"]
 page=st.sidebar.radio("Aller vers", pages)
 
-if page == page[0]:
+if page == pages[0]:
   # Afficher les données
     st.write("Voici les données du fichier CSV :")
     st.write(df.head())
@@ -47,7 +47,7 @@ if page == page[0]:
     st.write("Résumé statistique :")
     st.write(df.describe())
 
-    if page == page[1]:
+    if page == pages[1]:
         st.write("### Data Visualisation")
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
