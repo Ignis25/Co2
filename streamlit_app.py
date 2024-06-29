@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import chardet
 
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
