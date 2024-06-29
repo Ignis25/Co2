@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-df = pd.read_csv("C:/Users/arnaud.colombel/Downloads/2013.csv")
+df = pd.read_csv("C:\\Users\\arnaud.colombel\\Downloads\\2013.csv")
 url = 'https://github.com/Ignis25/Co2/blob/b43b8a994daaaadd910854d51f7ba9ef7688bc24/2013_data.csv'
 st.write(url)
 st.write(df)
