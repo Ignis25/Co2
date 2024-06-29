@@ -55,12 +55,12 @@ if page == page[0]:
 if page == page[1]:
   st.write("### Data Visualisation")
 
-fig = sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2')
-plt.title("Distribution de l'âge des passagers")
-plt.title('Distribution des émissions de CO2 par type de carburant')
-plt.xlabel('Type de carburant')
-plt.ylabel('Émissions de CO2 (g/km)')
-plt.xticks(rotation=45)
-st.pyplot(fig)
+if 'carburant' in df.columns and 'co2 (g/km)' in df.columns:
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x='carburant', y='co2 (g/km)', data=df, palette='Set2', ax=ax)
+    ax.set_title("Distribution du CO2 par type de carburant")
+    st.pyplot(fig)
+else:
+    st.error("Les colonnes 'carburant' ou 'co2 (g/km)' ne sont pas présentes dans le DataFrame.")
 
 
