@@ -5,7 +5,8 @@ import seaborn as sns
 import chardet
 import matplotlib.pyplot as plt
 
-st.title('Lire un fichier CSV')
+st.title("Projet Co2")
+st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
@@ -41,8 +42,7 @@ else:
     st.write("Veuillez télécharger un fichier CSV pour continuer.")
 
     
-st.title("Projet Co2")
-st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
+
 st.sidebar.title("Sommaire")
 pages=["Présentation du Projet", "Data Visualisation", "Machine Learning", "Résultats"]
 page=st.sidebar.radio("Aller vers", pages)
