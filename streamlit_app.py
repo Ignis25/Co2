@@ -21,8 +21,7 @@ if uploaded_file is not None:
         # Lire le fichier CSV avec l'encodage détecté
         df = pd.read_csv(uploaded_file, sep=';', encoding=encoding, on_bad_lines='skip', low_memory=False)
         
-        
-        
+
         # Afficher quelques statistiques sur les données
         st.write("Résumé statistique :")
         st.write(df.describe())
@@ -54,12 +53,10 @@ if page == page[0]:
 
 if page == page[1]:
   st.write("### Data Visualisation")
-    if 'Carburant' in df.columns and 'CO2 (g/km)' in df.columns:
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
-else:
-    st.error("Les colonnes 'carburant' ou 'co2 (g/km)' ne sont pas présentes dans le DataFrame.")
+
 
 
