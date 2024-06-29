@@ -21,13 +21,9 @@ if uploaded_file is not None:
         # Lire le fichier CSV avec l'encodage détecté
         df = pd.read_csv(uploaded_file, sep=';', encoding=encoding, on_bad_lines='skip', low_memory=False)
         
-        # Afficher quelques statistiques sur les données
-        st.write("Résumé statistique :")
-        st.write(df.describe())
-        
         # Afficher les premières lignes du fichier CSV
         st.write("Premières lignes du fichier CSV :")
-        st.write(df.head())
+        
     except pd.errors.ParserError as e:
         st.error(f"Erreur lors de la lecture du fichier CSV : {e}")
         st.stop()
@@ -42,20 +38,21 @@ else:
 st.sidebar.title("Sommaire")
 pages=["Présentation du Projet", "Data Visualisation", "Machine Learning", "Résultats"]
 page=st.sidebar.radio("Aller vers", pages)
-if st.checkbox("Afficher"):
-  st.write("Suite du Streamlit")
-  
+
 if page == page[0]:
   # Afficher les données
     st.write("Voici les données du fichier CSV :")
-    st.dataframe(df)
+    st.write(df.head())
+     # Afficher quelques statistiques sur les données
+    st.write("Résumé statistique :")
+    st.write(df.describe())
 
-if page == page[1]:
-    st.write("### Data Visualisation")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
-    ax.set_title("Distribution du CO2 par type de carburant")
-    st.pyplot(fig)
+    if page == page[1]:
+        st.write("### Data Visualisation")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
+        ax.set_title("Distribution du CO2 par type de carburant")
+        st.pyplot(fig)
 
 
 
