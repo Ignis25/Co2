@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import chardet
+import matplotlib.pyplot as plt
 
 st.title('Lire un fichier CSV')
 
