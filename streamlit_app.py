@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
+uuploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
 if uploaded_file is not None:
     try:
-        # Lire le fichier CSV
-        df = pd.read_csv(uploaded_file, sep=';', encoding='utf-8', on_bad_lines='skip', low_memory=False)
+        # Lire le fichier CSV avec un autre encodage
+        df = pd.read_csv(uploaded_file, sep=';', encoding='latin1', on_bad_lines='skip', low_memory=False)
         # Afficher les données
         st.write("Voici les données du fichier CSV :")
         st.dataframe(df)
