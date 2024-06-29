@@ -48,7 +48,7 @@ if page == pages[0]:
     st.write(df.describe())
 
 if page == pages[1]:
-     st.write("### Data Visualisation")
+    st.write("### Data Visualisation")
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
     ax.set_title("Distribution du CO2 par type de carburant")
