@@ -3,11 +3,10 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-import webbrowser
-webbrowser.open('http://streamlit.io')
+df = pd.read_csv("C:\Users\arnaud.colombel\Downloads\2013.csv")
 url = 'https://github.com/Ignis25/Co2/blob/b43b8a994daaaadd910854d51f7ba9ef7688bc24/2013_data.csv'
-
 st.write(url)
+st.write(df)
 
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
