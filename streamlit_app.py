@@ -21,7 +21,6 @@ if uploaded_file is not None:
         # Lire le fichier CSV avec l'encodage détecté
         df = pd.read_csv(uploaded_file, sep=';', encoding=encoding, on_bad_lines='skip', low_memory=False)
         
-
         # Afficher quelques statistiques sur les données
         st.write("Résumé statistique :")
         st.write(df.describe())
@@ -48,15 +47,15 @@ if st.checkbox("Afficher"):
   
 if page == page[0]:
   # Afficher les données
-st.write("Voici les données du fichier CSV :")
-st.dataframe(df)
+    st.write("Voici les données du fichier CSV :")
+    st.dataframe(df)
 
 if page == page[1]:
-st.write("### Data Visualisation")
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
-ax.set_title("Distribution du CO2 par type de carburant")
-st.pyplot(fig)
+    st.write("### Data Visualisation")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
+    ax.set_title("Distribution du CO2 par type de carburant")
+    st.pyplot(fig)
 
 
 
