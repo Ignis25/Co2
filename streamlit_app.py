@@ -55,9 +55,9 @@ if page == page[0]:
 if page == page[1]:
   st.write("### Data Visualisation")
 
-if 'carburant' in df.columns and 'co2 (g/km)' in df.columns:
+if 'Carburant' in df.columns and 'CO2 (g/km)' in df.columns:
     fig, ax = plt.subplots(figsize=(10, 6))
-    sns.violinplot(x='carburant', y='co2 (g/km)', data=df, palette='Set2', ax=ax)
+    sns.violinplot(x='Carburant', y='CO2 (g/km)', data=df, palette='Set2', ax=ax)
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
 else:
