@@ -3,12 +3,18 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-uuploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
+uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
 if uploaded_file is not None:
     try:
-        # Lire le fichier CSV avec un autre encodage
-        df = pd.read_csv(uploaded_file, sep=';', encoding='latin1', on_bad_lines='skip', low_memory=False)
+        # Lire le fichier brut pour détecter l'encodage
+        raw_data = uploaded_file.getvalue()
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
+        
+        # Lire le fichier CSV avec l'encodage détecté
+        df = pd.read_csv(uploaded_file, sep=';', encoding=encoding, on_bad_lines='skip', low_memory=False)
+        
         # Afficher les données
         st.write("Voici les données du fichier CSV :")
         st.dataframe(df)
@@ -28,7 +34,7 @@ if uploaded_file is not None:
         st.stop()
 else:
     st.write("Veuillez télécharger un fichier CSV pour continuer.")
-
+    
 st.title("Projet Co2")
 st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 st.sidebar.title("Sommaire")
