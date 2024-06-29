@@ -54,7 +54,7 @@ if page == page[0]:
 if page == page[1]:
   st.write("### Data Visualisation")
 
-fig = sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=url, palette='Set2')
+fig = sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=df, palette='Set2')
 plt.title("Distribution de l'âge des passagers")
 plt.title('Distribution des émissions de CO2 par type de carburant')
 plt.xlabel('Type de carburant')
