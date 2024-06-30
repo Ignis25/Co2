@@ -6,7 +6,7 @@ import chardet
 import matplotlib.pyplot as plt
 
 st.title("Projet Co2")
-st.write("Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
+st.write(""### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
