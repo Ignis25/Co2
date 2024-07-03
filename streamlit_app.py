@@ -152,5 +152,38 @@ if page == pages[3]:
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
 
+if page == pages[4]
+    #Nettoyage du nombre de colonne
+    donnees2013_ml = donnees2013.drop([
+        'MARQUE',
+        'MODÈLE DOSSIER',
+        'MODÈLE UTAC',
+        'DÉSIGNATION COMMERCIALE',
+        'CNIT',
+        'TYPE VARIANTE VERSION (TVV)',
+        'BOÎTE DE VITESSE',
+        'CO TYPE I (G/KM)',
+        'HC (G/KM)',
+        'NOX (G/KM)',
+        'HC+NOX (G/KM)',
+        'PARTICULES (G/KM)',
+        'NORME UE',
+        'DATE DE MISE À JOUR',
+        'année'
+    ], axis=1)
+    
+    #Isoler la valeur cible
+    y = donnees2013_ml['CO2 (G/KM)']
+    X = donnees2013_ml.drop(['CO2 (G/KM)'], axis = 1)
+    
+    #Séparation du jeu de donnée pour l'entrainement et le test. On garde 20% des données pour les tests.
+    from sklearn.model_selection import train_test_split
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+
+    st.dataframe(X_train.head(30))
+
+#Objectif pour mardi 10/07 : Arnaud => page dataviz / François => commencer code machine learning
+
 
 
