@@ -184,6 +184,7 @@ if page == pages[4]
     st.dataframe(X_train.head(30))
 
 #Objectif pour mardi 10/07 : Arnaud => page dataviz / François => commencer code machine learning
+#Question Kalome : lien du fichier ? On est bloqué
 
 
 
