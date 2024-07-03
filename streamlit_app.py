@@ -11,6 +11,27 @@ st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colom
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
+st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed969_96670_voiture-propre.jpg", width=300)
+st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert")
+
+# Using object notation
+add_selectbox = st.sidebar.selectbox(
+    "",
+    ("","Arnaud Colombel", "Saric Drazen", "François vergne"))
+
+if add_selectbox == "":
+    st.sidebar.write("")
+
+if add_selectbox == "Arnaud Colombel":
+    st.sidebar.write("Travaillant en supply chain le transport est au coeur de mon métier. Il y a 2 ans via une politique RSE nous avons commencé à utiliser le transport ferroviaire de livraison de containers pour limiter nos émissions de Co2. ")
+    
+if add_selectbox == "Saric Drazen":
+    st.sidebar.write("En tant que Responsable Réseau Drive en Distribution, je suis en charge de la gestion de quatre centres de distribution. Mon rôle inclut la supervision des opérations, l'optimisation des processus logistiques et le développement de solutions innovantes pour améliorer l'efficacité et la satisfaction client. Un des défis majeurs dans la livraison à domicile (LAD) est la gestion du dernier kilomètre, qui représente souvent le coût le plus élevé dans la chaîne logistique. Pour relever ce défi, je souhaite développer un projet visant à réduire les émissions de CO2 et à montrer à nos clients, via notre flotte électrique, notre engagement RSE.")
+
+    
+if add_selectbox == "François vergne":
+    st.sidebar.write("En tant que Responsable Admin. et Financier externe, il est fréquent d’accompagner mes clients sur la thématique des véhicules (de fonction, de service, de transport). Pour eux, il s'agit d'une problématique complexe : ils doivent équilibrer les avantages et les inconvénients entre la hausse des prix des véhicules, l’accessibilité aux différents types de carburant, les nouvelles réglementations environnementales (ex: obligation de renouveler au moins 10 % de leurs véhicules chaque année avec des véhicules à faibles émissions)  et les enjeux RSE (reporting CSRD, marque-employeur, amélioration de l’image de l’entreprise pour faciliter le recrutement, etc…).")
+
 if uploaded_file is not None:
     try:
         # Lire le fichier brut pour détecter l'encodage
