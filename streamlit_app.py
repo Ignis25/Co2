@@ -156,7 +156,7 @@ if page == pages[3]:
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
 
-    st.write("####DataViz N°2")
+    st.write("DataViz N°2")
     # Suppression des valeurs NaN dans la colonne CO2
     data_nettoyer = donnees2013.dropna(subset=['CO2 (g/km)'])
 
