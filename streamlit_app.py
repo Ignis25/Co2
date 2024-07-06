@@ -205,7 +205,7 @@ if page == pages[3]:
     st.write("DataViz N°1")
     st.write("Cette visualisation montre la distribution des émissions de CO2 en fonction des différents types de carburants, révélant que les véhicules utilisant le carburant ES (Essence) et FE (Flexible Fuel) ont une large gamme d'émissions, tandis que les carburants comme EE (Electricité) et GL (Gaz Liquéfié) ont des émissions significativement plus faibles. Les types de carburants GH (Hybride), EH (Hybride Essence), et GN (Gaz Naturel) affichent des distributions plus restreintes, indiquant une performance environnementale plus homogène dans ces catégories.")
     fig, ax = plt.subplots(figsize=(10, 6))
-    sns.violinplot(x='Carburant', y='CO2 (G/KM)', data=donnees2013, palette='Set2', ax=ax)
+    sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=donnees2013, palette='Set2', ax=ax)
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
 
