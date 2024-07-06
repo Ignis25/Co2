@@ -216,7 +216,7 @@ if page == pages[3]:
 
     # Définir les variables pour le nuage de points
     x = data_nettoyer['PUISSANCE MAXIMALE (KW)']  # Puissance maximale du moteur
-    y = data_nettoyer['CONSOMMATION (L/100KM)']  # Consommation mixte de carburant
+    y = data_nettoyer['CONSOMMATION MIXTE (L/100KM)']  # Consommation mixte de carburant
     co2 = data_nettoyer['CO2 (G/KM)']
 
     # Créer une échelle de couleurs allant du bleu au rouge
