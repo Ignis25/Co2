@@ -188,7 +188,7 @@ if page == pages[3]:
 
     st.write("#DataViz N°3")
     # Calculer les émissions de CO2 moyennes par marque
-    co2_by_marque = donnees2013.groupby('Marque')['Co2 (g/km)'].mean().sort_values()
+    co2_by_marque = donnees2013.groupby('Marque')['CO2 (g/km)'].mean().sort_values()
 
     # Tracer le diagramme à barres
     plt.figure(figsize=(12, 8))
