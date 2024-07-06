@@ -152,7 +152,7 @@ if page == pages[3]:
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
 
-if page == pages[4]
+if page == pages[4]:
     #Nettoyage du nombre de colonne
     donnees2013_ml = donnees2013.drop([
         'MARQUE',
