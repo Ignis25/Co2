@@ -157,7 +157,6 @@ if page == pages[3]:
     st.pyplot(fig)
 
     st.write("DataViz N°2")
-    st.write("L'analyse du nuage de points révèle que plus la puissance du moteur est élevée et plus il consomme, plus les émissions de Co2 associées sont élevées.")
     # Suppression des valeurs NaN dans la colonne CO2
     data_nettoyer = donnees2013.dropna(subset=['CO2 (g/km)'])
 
@@ -185,6 +184,7 @@ if page == pages[3]:
     plt.colorbar(scatter, label='Émissions de CO2 (g/km)')
     plt.grid(True)
     st.pyplot(plt)
+    st.write("L'analyse du nuage de points révèle que plus la puissance du moteur est élevée et plus il consomme, plus les émissions de Co2 associées sont élevées.")
              
 
 if page == pages[4]:
