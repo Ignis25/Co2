@@ -146,22 +146,22 @@ if page == pages[2]:
             st.write()
 
 if page == pages[3]:
-    st.write("### Data Visualisation")
-    st.write("DataViz N°1")
+    st.write("#Data Visualisation")
+    st.write("####DataViz N°1")
     st.write("Cette visualisation montre la distribution des émissions de CO2 en fonction des différents types de carburants, révélant que les véhicules utilisant le carburant ES (Essence) et FE (Flexible Fuel) ont une large gamme d'émissions, tandis que les carburants comme EE (Electricité) et GL (Gaz Liquéfié) ont des émissions significativement plus faibles. Les types de carburants GH (Hybride), EH (Hybride Essence), et GN (Gaz Naturel) affichent des distributions plus restreintes, indiquant une performance environnementale plus homogène dans ces catégories.")
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x='Carburant', y='CO2 (g/km)', data=donnees2013, palette='Set2', ax=ax)
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
 
-    st.write("# DataViz N°2")
+    st.write("####DataViz N°2")
     # Suppression des valeurs NaN dans la colonne CO2
-    data_nettoyer = donnees2013.dropna(subset=['CO2 (G/KM)'])
+    data_nettoyer = donnees2013.dropna(subset=['CO2 (g/km)'])
 
     # Définir les variables pour le nuage de points
-    x = data_nettoyer['PUISSANCE MAXIMALE (KW)']  # Puissance maximale du moteur
-    y = data_nettoyer['CONSOMMATION MIXTE (L/100KM)']  # Consommation mixte de carburant
-    co2 = data_nettoyer['CO2 (G/KM)']
+    x = data_nettoyer['Puissance maximale (kW)']  # Puissance maximale du moteur
+    y = data_nettoyer['Consommation mixte (l/100km)']  # Consommation mixte de carburant
+    co2 = data_nettoyer['CO2 (g/km)']
 
     # Créer une échelle de couleurs allant du bleu au rouge
     cmap = mcolors.LinearSegmentedColormap.from_list("", ["blue", "red"])
