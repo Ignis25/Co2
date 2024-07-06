@@ -147,57 +147,57 @@ if page == pages[2]:
         if st.button("Fermer la liste des carburants"):
             st.write()
             
-    #Gestion des Nan
-    donnees2013 = donnees2013.rename(columns=lambda x: x.upper())
-    donnees2013 = donnees2013.rename({'CHAMP V9': 'NORME UE'}, axis = 1)
-    # Reconstitution de HC, NOX ou HC+NOX lorsque 2 des 3 colonnes sont connues
-    select_col = ['HC (G/KM)', 'NOX (G/KM)', 'HC+NOX (G/KM)']
-    select_donnees = donnees2013[donnees2013.isna().any(axis=1)][select_col]
-    donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'HC+NOX (G/KM)'] = (select_donnees['HC (G/KM)'] + select_donnees['NOX (G/KM)'])
-    donnees2013.loc[donnees2013['HC (G/KM)'].isna(), 'HC (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['NOX (G/KM)'])
-    donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'NOX (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['HC (G/KM)'])
+#Gestion des Nan
+donnees2013 = donnees2013.rename(columns=lambda x: x.upper())
+donnees2013 = donnees2013.rename({'CHAMP V9': 'NORME UE'}, axis = 1)
+# Reconstitution de HC, NOX ou HC+NOX lorsque 2 des 3 colonnes sont connues
+select_col = ['HC (G/KM)', 'NOX (G/KM)', 'HC+NOX (G/KM)']
+select_donnees = donnees2013[donnees2013.isna().any(axis=1)][select_col]
+donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'HC+NOX (G/KM)'] = (select_donnees['HC (G/KM)'] + select_donnees['NOX (G/KM)'])
+donnees2013.loc[donnees2013['HC (G/KM)'].isna(), 'HC (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['NOX (G/KM)'])
+donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'NOX (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['HC (G/KM)'])
 
-    #Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes CO2, CO TYPE I, HC, NOX, HC+NOX et PARTICULES
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO2 (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO TYPE I (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC (G/KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['NOX (G/KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC+NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC+NOX (G/KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'PARTICULES (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['PARTICULES (G/KM)'].fillna(0)
+#Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes CO2, CO TYPE I, HC, NOX, HC+NOX et PARTICULES
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO2 (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO TYPE I (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC (G/KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['NOX (G/KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC+NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC+NOX (G/KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'PARTICULES (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['PARTICULES (G/KM)'].fillna(0)
 
-    #Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes liées aux consommations (urbaine, mixte, extra-urbaine)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION MIXTE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION MIXTE (L/100KM)'].fillna(0)
+#Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes liées aux consommations (urbaine, mixte, extra-urbaine)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION MIXTE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION MIXTE (L/100KM)'].fillna(0)
 
-    #Pour les véhicules Essence-électricité (hybride rechargeable), il y a 3 lignes :
-    # On considère qu'en Urbain => 100% en électrique donc 0
-    # On considère qu'en Extra-Urbain => 5,5L (d'après les sites et commentaires, c'est entre 5,2L et 6L pour les 3 véhicules)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
-    donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(5.5)
+#Pour les véhicules Essence-électricité (hybride rechargeable), il y a 3 lignes :
+# On considère qu'en Urbain => 100% en électrique donc 0
+# On considère qu'en Extra-Urbain => 5,5L (d'après les sites et commentaires, c'est entre 5,2L et 6L pour les 3 véhicules)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
+donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(5.5)
 
-    #Remplacer les NaN de 'CO TYPE I (G/KM)' par la médiane en fonction du carburant
-    for carb in donnees2013.loc[donnees2013[['CO TYPE I (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-        donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']] = donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['CO TYPE I (G/KM)']].median())
+#Remplacer les NaN de 'CO TYPE I (G/KM)' par la médiane en fonction du carburant
+for carb in donnees2013.loc[donnees2013[['CO TYPE I (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+    donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']] = donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['CO TYPE I (G/KM)']].median())
 
-    #Remplacer les NaN de 'HC (G/KM)' par la médiane en fonction du carburant
-    for carb in donnees2013.loc[donnees2013[['HC (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-      donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']] = donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC (G/KM)']].median())
+#Remplacer les NaN de 'HC (G/KM)' par la médiane en fonction du carburant
+for carb in donnees2013.loc[donnees2013[['HC (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+    donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']] = donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC (G/KM)']].median())
 
-    #Remplacer les NaN de 'NOX (G/KM)' par la médiane en fonction du carburant
-    for carb in donnees2013.loc[donnees2013[['NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-        donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']] = donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & ( donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['NOX (G/KM)']].median())
+#Remplacer les NaN de 'NOX (G/KM)' par la médiane en fonction du carburant
+for carb in donnees2013.loc[donnees2013[['NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+    donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']] = donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & ( donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['NOX (G/KM)']].median())
 
-    #Remplacer les NaN de 'HC+NOX (G/KM)' par la médiane en fonction du carburant
-    for carb in donnees2013.loc[donnees2013[['HC+NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-        donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']] = donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC+NOX (G/KM)']].median())
+#Remplacer les NaN de 'HC+NOX (G/KM)' par la médiane en fonction du carburant
+for carb in donnees2013.loc[donnees2013[['HC+NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+    donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']] = donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC+NOX (G/KM)']].median())
 
-    #Remplacer les NaN de 'PARTICULES (G/KM)' par la médiane en fonction du carburant
-    for carb in donnees2013.loc[donnees2013[['PARTICULES (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-        donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['PARTICULES (G/KM)']].median())
+#Remplacer les NaN de 'PARTICULES (G/KM)' par la médiane en fonction du carburant
+for carb in donnees2013.loc[donnees2013[['PARTICULES (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+    donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['PARTICULES (G/KM)']].median())
 
-    #Remplacer les NaN restant sur la colonne 'PARTICULES (G/KM)' par la médiane sachant que sur 43% des reponses sont 0 et 40% sont 0,001
-    donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']].fillna(donnees2013['PARTICULES (G/KM)'].median())
+#Remplacer les NaN restant sur la colonne 'PARTICULES (G/KM)' par la médiane sachant que sur 43% des reponses sont 0 et 40% sont 0,001
+donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']].fillna(donnees2013['PARTICULES (G/KM)'].median())
 
 
 if page == pages[3]:
