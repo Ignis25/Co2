@@ -178,7 +178,7 @@ if page == pages[2]:
 
     #Remplacer les NaN de 'CO TYPE I (G/KM)' par la médiane en fonction du carburant
     for carb in donnees2013.loc[donnees2013[['CO TYPE I (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']] = donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['CO TYPE I (G/KM)']].median())
+        donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']] = donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['CO TYPE I (G/KM)']].median())
 
     #Remplacer les NaN de 'HC (G/KM)' par la médiane en fonction du carburant
     for carb in donnees2013.loc[donnees2013[['HC (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
@@ -186,15 +186,15 @@ if page == pages[2]:
 
     #Remplacer les NaN de 'NOX (G/KM)' par la médiane en fonction du carburant
     for carb in donnees2013.loc[donnees2013[['NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']] = donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & ( donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['NOX (G/KM)']].median())
+        donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']] = donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & ( donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['NOX (G/KM)']].median())
 
     #Remplacer les NaN de 'HC+NOX (G/KM)' par la médiane en fonction du carburant
     for carb in donnees2013.loc[donnees2013[['HC+NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']] = donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC+NOX (G/KM)']].median())
+        donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']] = donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC+NOX (G/KM)']].median())
 
     #Remplacer les NaN de 'PARTICULES (G/KM)' par la médiane en fonction du carburant
     for carb in donnees2013.loc[donnees2013[['PARTICULES (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['PARTICULES (G/KM)']].median())
+        donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['PARTICULES (G/KM)']].median())
 
     #Remplacer les NaN restant sur la colonne 'PARTICULES (G/KM)' par la médiane sachant que sur 43% des reponses sont 0 et 40% sont 0,001
     donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']].fillna(donnees2013['PARTICULES (G/KM)'].median())
