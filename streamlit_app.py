@@ -147,11 +147,42 @@ if page == pages[2]:
 
 if page == pages[3]:
     st.write("### Data Visualisation")
+    st.write("DataViz N°1")
     st.write("Cette visualisation montre la distribution des émissions de CO2 en fonction des différents types de carburants, révélant que les véhicules utilisant le carburant ES (Essence) et FE (Flexible Fuel) ont une large gamme d'émissions, tandis que les carburants comme EE (Electricité) et GL (Gaz Liquéfié) ont des émissions significativement plus faibles. Les types de carburants GH (Hybride), EH (Hybride Essence), et GN (Gaz Naturel) affichent des distributions plus restreintes, indiquant une performance environnementale plus homogène dans ces catégories.")
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.violinplot(x='Carburant', y='CO2 (g/km)', data=donnees2013, palette='Set2', ax=ax)
     ax.set_title("Distribution du CO2 par type de carburant")
     st.pyplot(fig)
+
+    st.write("# DataViz N°2")
+    # Suppression des valeurs NaN dans la colonne CO2
+    data_nettoyer = donnees2013.dropna(subset=['CO2 (G/KM)'])
+
+    # Définir les variables pour le nuage de points
+    x = data_nettoyer['PUISSANCE MAXIMALE (KW)']  # Puissance maximale du moteur
+    y = data_nettoyer['CONSOMMATION MIXTE (L/100KM)']  # Consommation mixte de carburant
+    co2 = data_nettoyer['CO2 (G/KM)']
+
+    # Créer une échelle de couleurs allant du bleu au rouge
+    cmap = mcolors.LinearSegmentedColormap.from_list("", ["blue", "red"])
+
+    # Normaliser les valeurs de CO2
+    norm = mcolors.Normalize(vmin=co2.min(), vmax=co2.max())
+
+    # Tracer le nuage de points avec seaborn et ajouter une régression linéaire
+    plt.figure(figsize=(12, 12))
+    scatter = plt.scatter(x, y, c=co2, cmap=cmap, s=400, norm=norm, alpha=0.5, edgecolor='w', linewidth=0.5)
+
+    sns.regplot(x=x, y=y,scatter=False, color='gray')
+
+    # Ajouter des étiquettes et un titre
+    plt.title('Puissance maximale vs Consommation de carburant Vs CO2')
+    plt.xlabel('Puissance maximale du moteur (kW)')
+    plt.ylabel('Consommation mixte de carburant (l/100km)')
+    plt.colorbar(scatter, label='Émissions de CO2 (g/km)')
+    plt.grid(True)
+    plt.show()
+             
 
 if page == pages[4]:
     #Nettoyage du nombre de colonne
