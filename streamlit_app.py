@@ -185,6 +185,19 @@ if page == pages[3]:
     plt.colorbar(scatter, label='Émissions de CO2 (g/km)')
     plt.grid(True)
     st.pyplot(plt)
+
+    st.write("#DataViz N°3")
+    # Calculer les émissions de CO2 moyennes par marque
+    co2_by_marque = donnees2013.groupby('Marque')['Co2 (g/km)'].mean().sort_values()
+
+    # Tracer le diagramme à barres
+    plt.figure(figsize=(12, 8))
+    co2_by_marque.plot(kind='barh', color='skyblue')
+    plt.xlabel('Émissions de CO2 moyennes (g/km)')
+    plt.ylabel('Marque')
+    plt.title('1) Comparaison des émissions de CO2 par marque de véhicule')
+    plt.grid(axis='x')
+    st.pyplot(plt)
     
              
 
