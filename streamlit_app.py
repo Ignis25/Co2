@@ -6,6 +6,7 @@ import chardet
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.colors as mcolors
+from sklearn.preprocessing import OrdinalEncoder
 
 st.title("Projet Co2")
 st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed969_96670_voiture-propre.jpg", width=300)
@@ -251,6 +252,22 @@ if page == pages[3]:
     plt.title('1) Comparaison des émissions de CO2 par marque de véhicule')
     plt.grid(axis='x')
     st.pyplot(plt)
+
+    st.write("DataViz n°4")
+    oe = OrdinalEncoder()
+    st.write("Ce graphique permet d'observer la corrélation entre les différentes variables. Si nous analysons la variable CO2 (g/km), nous remarquons que les variables les plus corrélées sont les 3 variables de consommations (mixte, urbaine et extra-urbaine), ensuite, la masse du véhicule est aussi très important (0.75 et 0.75 de coefficient) puis arrive ensuite, le modèle (dossier et UTAC) puis le type de carrosserie. Ce grpahique nous confirme l'analyse précédente sur la corrélation entre le type de carburant et les émissions de NOX.")
+    # Encodage des données 2013 et reconstruction en df
+    donnees2013_cor = oe.fit_transform(donnees2013)
+    donnees2013_cor  = pd.DataFrame(donnees2013_cor, columns=donnees2013.columns)
+
+    # corrélation
+    correlation_matrix = donnees2013_cor.corr()
+    plt.figure(figsize=(20, 10  ))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+    plt.title('Matrice de corrélation')
+    st.pyplot(plt)
+             
+
     
              
 
