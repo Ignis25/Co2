@@ -253,9 +253,9 @@ if page == pages[3]:
     plt.grid(axis='x')
     st.pyplot(plt)
 
-    st.write("DataViz n°4")
-    oe = OrdinalEncoder()
+    st.write("DataViz N°4")
     st.write("Ce graphique permet d'observer la corrélation entre les différentes variables. Si nous analysons la variable CO2 (g/km), nous remarquons que les variables les plus corrélées sont les 3 variables de consommations (mixte, urbaine et extra-urbaine), ensuite, la masse du véhicule est aussi très important (0.75 et 0.75 de coefficient) puis arrive ensuite, le modèle (dossier et UTAC) puis le type de carrosserie. Ce grpahique nous confirme l'analyse précédente sur la corrélation entre le type de carburant et les émissions de NOX.")
+    oe = OrdinalEncoder()
     # Encodage des données 2013 et reconstruction en df
     donnees2013_cor = oe.fit_transform(donnees2013)
     donnees2013_cor  = pd.DataFrame(donnees2013_cor, columns=donnees2013.columns)
