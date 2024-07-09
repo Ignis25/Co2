@@ -8,6 +8,9 @@ import matplotlib.colors as colors
 import matplotlib.colors as mcolors
 from sklearn.preprocessing import OrdinalEncoder
 
+test = pd.read_csv('2013_data.csv')
+test.head()
+
 st.title("Projet Co2")
 st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed969_96670_voiture-propre.jpg", width=300)
 st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert")
