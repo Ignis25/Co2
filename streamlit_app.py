@@ -8,7 +8,7 @@ import matplotlib.colors as colors
 import matplotlib.colors as mcolors
 from sklearn.preprocessing import OrdinalEncoder
 
-test = pd.read_csv('2013_data.csv')
+test = st.file_uploader("2013_data.csv", type="csv")
 
 
 st.title("Projet Co2")
