@@ -9,7 +9,7 @@ import matplotlib.colors as mcolors
 from sklearn.preprocessing import OrdinalEncoder
 
 # Charge le fichier via l'interface utilisateur
-uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
+uploaded_file = st.file_uploader("2O13_data.csv", type="csv")
 
 if uploaded_file is not None:
     # Lire le fichier CSV
