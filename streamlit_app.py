@@ -28,7 +28,6 @@ st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed
 st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert")
 st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
 
-st.write(test.head())
 
 #Sidebar 
 st.sidebar.title("Sommaire")
