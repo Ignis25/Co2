@@ -8,7 +8,19 @@ import matplotlib.colors as colors
 import matplotlib.colors as mcolors
 from sklearn.preprocessing import OrdinalEncoder
 
-test = st.file_uploader("2013_data.csv", type="csv")
+# Charge le fichier via l'interface utilisateur
+uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
+
+if uploaded_file is not None:
+    # Lire le fichier CSV
+    try:
+        test = pd.read_csv(uploaded_file)
+        st.write("Aperçu des données :")
+        st.write(test.head())
+    except Exception as e:
+        st.error(f"Erreur lors de la lecture du fichier: {e}")
+else:
+    st.info("Veuillez télécharger un fichier CSV.")
 
 
 st.title("Projet Co2")
