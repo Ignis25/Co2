@@ -445,8 +445,42 @@ if page == pages[4]:
     sc = StandardScaler()
     X_train = sc.fit_transform(X_train)
     X_test = sc.transform(X_test)
+    st.write("## Arbre de décision")
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.metrics import classification_report
 
+    #Entrainer le modèle
+    dt_clf = DecisionTreeClassifier()
+    dt_clf.fit(X_train, y_train)
+
+    #Générer les tests
+    y_pred_test = dt_clf.predict(X_test)
+    train_score = round(dt_clf.score(X_train, y_train), 4)
+    test_score = round(dt_clf.score(X_test, y_test), 4)
+
+    st.write(f'Score sur ensemble train: {train_score}')
+    st.write(f'Score sur ensemble test: {test_score}')
+    st.write("La méthode score est une métrique qui va comparer les résultats de prédictions de votre jeu de données X par rapport à y. Nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. Nous ne sommes donc pas dans un cas d'overfitting. De plus, le score sur le jeu de test est proche de 1 (0,96), nous pouvons donc déduire que notre modèle est performant.")
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+    # Calcul des métriques (assurez-vous que y_test et y_pred_test sont définis)
+    mae = mean_absolute_error(y_test, y_pred_test)
+    mse = mean_squared_error(y_test, y_pred_test)
+    rmse = np.sqrt(mse)
+
+    # Affichage des résultats dans Streamlit
+    st.write("Mean Absolute Error (MAE) : C'est la moyenne des différences absolues entre les vraies valeurs et les valeurs prédites du modèle. Elle est facilement interprétable au regard de la variable cible, car elle a la même unité.")
+    st.write("MAE =", round(mae, 3))
+
+    st.write("\n")
+
+    st.write("Mean Squared Error (MSE) : C'est la moyenne des différences mises au carré entre les vraies valeurs et les valeurs prédites de la variable cible. Elle n'est pas dans la même unité que la variable cible, ce qui rend son interprétation plus complexe. Cette métrique pénalise davantage les grandes erreurs que la MAE. Elle est donc intéressante lorsque nous souhaitons absolument éviter ces cas.")
+    st.write("MSE =", round(mse, 3))
+
+    st.write("\n")
+
+    st.write("Root Mean Squared Error (RMSE) : C'est la racine carrée de la Mean Squared Error. Elle pénalise également davantage les grands écarts de prédiction. Elle a la même unité que la variable cible donc elle sera plus interprétable que la MSE.")
+    st.write("RMSE =", round(rmse, 3))
 
 if page == pages[5]:
         st.header("Modélisation 2 : simulation pour un nouveau véhicule")
-
