@@ -6,3 +6,4 @@ numpy
 chardet
 matplotlib
 scikit-learn
+plotly
