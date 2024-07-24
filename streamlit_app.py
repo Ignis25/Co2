@@ -346,9 +346,9 @@ if page == pages[3]:
     fig = px.scatter(donnees2013, x='MASSE VIDE EURO MAX (KG)', y='CO2 (G/KM)', 
                  title="Relation entre les émissions de CO2 (G/KM) et la masse des véhicules",
                  labels={'MASSE VIDE EURO MAX (KG)': 'Masse des véhicules (KG)', 'CO2 (G/KM)': 'Émissions de CO2 (G/KM)'},
-                 color_discrete_sequence=['#A7001E'])
+                 color_discrete_sequence=['#A7001E'], width=2000, height=800)
 
-    fig.update_traces(marker=dict(size=12))
+    fig.update_traces(marker=dict(size=6))
     st.plotly_chart(fig)
 
     st.write("### DataViz N°6")
@@ -363,7 +363,7 @@ if page == pages[3]:
     fig = px.imshow(correlation_matrix, text_auto=True, color_continuous_scale='turbo', aspect='auto')
     fig.update_layout(title='Matrice de corrélation', width=4000, height=1000)
     st.plotly_chart(fig)
-    
+
     st.write("### DataViz bonus")
     st.write("Nous finissons notre datavisualisation sur ce graphique afin d'attirer l'attention sur un déséquilibre du jeu de données. En effet, nous remarquons sans difficulté que 2 types de carburant ont le monopole. Le Gasoil pour 84,2% et l'Essence pour 13,7%.")
     carburant_counts = donnees2013['CARBURANT'].value_counts()
@@ -549,7 +549,7 @@ if page == pages[4]:
     mae = mean_absolute_error(y_test, y_pred_test)
     mse = mean_squared_error(y_test, y_pred_test)
     rmse = np.sqrt(mse)
-    
+
     # Affichage des résultats dans Streamlit
     st.write("## Régression logistique")
     st.write(f'Score sur ensemble train: {train_score}')
@@ -623,4 +623,4 @@ if page == pages[4]:
 
 
 if page == pages[5]:
-        st.header("Modélisation 2 : simulation pour un nouveau véhicule")
+        st.header("Modélisation 2 : Simulation pour un nouveau véhicule")
