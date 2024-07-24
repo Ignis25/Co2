@@ -36,7 +36,7 @@ st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert
 
 #Sidebar 
 st.sidebar.title("Sommaire")
-pages=["Introduction","Contexte","Exploration des données", "DataVizualization", "Modélisation"]
+pages=["Introduction","Contexte","Exploration des données", "DataVizualization", "Modélisation 1", "Modélisation 2"]
 page=st.sidebar.radio("Naviguer vers", pages)
 st.sidebar.write("\n")
 st.sidebar.write("\n")
@@ -376,6 +376,14 @@ if page == pages[3]:
              
 
 if page == pages[4]:
+    st.header("Modélisation 1 et analyse de performance")
+    st.warning("""
+    Lors de la phase d'exploration et de datavisualisation, nous avons identifié nos variables explicatives notamment **la consommation**, **la masse du véhicule** et **le type de carburant**. Nous allons donc nettoyer notre jeu de données pour ne conserver que ces variables. De plus, nous isolerons la variable cible **'CO2 (g/km)'**. Ensuite, nous avons effectué les phases de prétraitement et d'ingénierie des caractéristiques, en réduisant le nombre de variables pour ne garder que les explicatives.
+
+    Pour garantir un bon entraînement de notre modèle, nous allons diviser le jeu de données en deux parties : **80 % pour l'entraînement** et **20 % pour les tests**.
+    """)
+
+
     #Nettoyage du nombre de colonne
     donnees2013_ml = donnees2013.drop([
         'MARQUE',
@@ -391,8 +399,7 @@ if page == pages[4]:
         'HC+NOX (G/KM)',
         'PARTICULES (G/KM)',
         'NORME UE',
-        'DATE DE MISE À JOUR',
-        'année'
+        'DATE DE MISE À JOUR'
     ], axis=1)
     
     #Isoler la valeur cible
@@ -404,10 +411,42 @@ if page == pages[4]:
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 
-    st.dataframe(X_train.head(30))
+    from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 
-#Objectif pour mardi 10/07 : Arnaud => page dataviz / François => commencer code machine learning
-#Question Kalome : lien du fichier ? On est bloqué
+    #utilisation du OneHotEncoder pour la varbiable 'Hybride' car c'est une variable binaire
+    ohe = OneHotEncoder(drop='first', sparse_output=False)
+    cat_hybride_train = ohe.fit_transform(X_train[['HYBRIDE']])
+    cat_hybride_test = ohe.transform(X_test[['HYBRIDE']])
+
+    # Encodage de 'CARBURANT', 'CARROSSERIE', 'GAMME' avec OrdinalEncoder
+    oe = OrdinalEncoder()
+    cat_oe = ['CARBURANT', 'CARROSSERIE', 'GAMME']
+    cat_oe_train = oe.fit_transform(X_train[cat_oe])
+    cat_oe_test = oe.transform(X_test[cat_oe])
 
 
+    # Concaténer les colonnes encodées avec les autres colonnes
+    X_train = pd.concat([
+        pd.DataFrame(cat_hybride_train, index=X_train.index, columns=['HYBRIDE']),
+        pd.DataFrame(cat_oe_train, index=X_train.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+        X_train.drop(['HYBRIDE', 'CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)
+    ], axis=1)
+
+
+    X_test = pd.concat([
+        pd.DataFrame(cat_hybride_test, index=X_test.index, columns=['HYBRIDE']),
+        pd.DataFrame(cat_oe_test, index=X_test.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+        X_test.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)
+    ], axis=1)
+
+
+    #Le StandardScaler nous permet d'appliquer la transformation Z-Score à nos données.
+    from sklearn.preprocessing import StandardScaler
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
+
+
+if page == pages[5]:
+        st.header("Modélisation 2 : simulation pour un nouveau véhicule")
 
