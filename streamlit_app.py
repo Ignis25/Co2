@@ -363,7 +363,14 @@ if page == pages[3]:
     fig = px.imshow(correlation_matrix, text_auto=True, color_continuous_scale='turbo', aspect='auto')
     fig.update_layout(title='Matrice de corrélation', width=4000, height=1000)
     st.plotly_chart(fig)
-             
+    
+    st.write("### DataViz bonus")
+    st.write("Nous finissons notre datavisualisation sur ce graphique afin d'attirer l'attention sur un déséquilibre du jeu de données. En effet, nous remarquons sans difficulté que 2 types de carburant ont le monopole. Le Gasoil pour 84,2% et l'Essence pour 13,7%.")
+    carburant_counts = donnees2013['CARBURANT'].value_counts()
+    carburant_counts_df = carburant_counts.reset_index()
+    carburant_counts_df.columns = ['CARBURANT', 'COUNT']
+    fig = px.pie(carburant_counts_df, values='COUNT', names='CARBURANT', title='Répartition des véhicules par type de carburant')
+    st.plotly_chart(fig)
 
     
              
