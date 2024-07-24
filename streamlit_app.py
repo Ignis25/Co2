@@ -13,21 +13,6 @@ import io
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Charge le fichier via l'interface utilisateur
-uploaded_file = st.file_uploader("2O13_data.csv", type="csv")
-
-if uploaded_file is not None:
-    # Lire le fichier CSV
-    try:
-        test = pd.read_csv(uploaded_file)
-        st.write("Aperçu des données :")
-        st.write(test.head())
-    except Exception as e:
-        st.error(f"Erreur lors de la lecture du fichier: {e}")
-else:
-    st.info("Veuillez télécharger un fichier CSV.")
-
-
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
