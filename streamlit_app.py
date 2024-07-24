@@ -6,8 +6,12 @@ import chardet
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.colors as mcolors
+import sklearn
 from sklearn.preprocessing import OrdinalEncoder
+from sklearn.linear_model import LinearRegression
 import io
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Charge le fichier via l'interface utilisateur
 uploaded_file = st.file_uploader("2O13_data.csv", type="csv")
@@ -220,58 +224,78 @@ donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']
 
 
 if page == pages[3]:
-    st.write("###Data Visualisation")
-    st.write("DataViz N°1")
+    st.write("## Observons les données grâce à la Data Visualisation")
+    st.write("### DataViz n°1")
+    fig = px.histogram(donnees2013, x='CO2 (G/KM)', title='Distribution des émissions de CO2')
+    fig.update_layout(xaxis_title='CO2 (G/KM)',yaxis_title='Count',bargap=0.2, template='plotly_white')
+    st.plotly_chart(fig)
+    
+    
+    st.write("### DataViz N°2")
     st.write("Cette visualisation montre la distribution des émissions de CO2 en fonction des différents types de carburants, révélant que les véhicules utilisant le carburant ES (Essence) et FE (Flexible Fuel) ont une large gamme d'émissions, tandis que les carburants comme EE (Electricité) et GL (Gaz Liquéfié) ont des émissions significativement plus faibles. Les types de carburants GH (Hybride), EH (Hybride Essence), et GN (Gaz Naturel) affichent des distributions plus restreintes, indiquant une performance environnementale plus homogène dans ces catégories.")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data=donnees2013, palette='Set2', ax=ax)
-    ax.set_title("Distribution du CO2 par type de carburant")
-    st.pyplot(fig)
+    plt.figure(figsize=(10, 6))
+    sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data = donnees2013, palette='Set2')
+    plt.title('Distribution des émissions de CO2 par type de carburant')
+    plt.xlabel('Type de carburant')
+    plt.ylabel('Émissions de CO2 (g/km)')
+    plt.xticks(rotation=45)
+    st.pyplot(plt)
 
-    st.write("DataViz N°2")
+    st.write("### DataViz N°3")
     st.write("L'analyse du nuage de points révèle que plus la puissance du moteur est élevée et plus il consomme, plus les émissions de Co2 associées sont élevées.")
-    # Suppression des valeurs NaN dans la colonne CO2
+    # Nettoyer les données
     data_nettoyer = donnees2013.dropna(subset=['CO2 (G/KM)'])
 
     # Définir les variables pour le nuage de points
-    x = data_nettoyer['PUISSANCE MAXIMALE (KW)']  # Puissance maximale du moteur
-    y = data_nettoyer['CONSOMMATION MIXTE (L/100KM)']  # Consommation mixte de carburant
+    x = data_nettoyer['PUISSANCE MAXIMALE (KW)']
+    y = data_nettoyer['CONSOMMATION MIXTE (L/100KM)']
     co2 = data_nettoyer['CO2 (G/KM)']
 
-    # Créer une échelle de couleurs allant du bleu au rouge
-    cmap = mcolors.LinearSegmentedColormap.from_list("", ["blue", "red"])
+    # Créer le nuage de points avec Plotly
+    fig = px.scatter(data_nettoyer, x='PUISSANCE MAXIMALE (KW)', y='CONSOMMATION MIXTE (L/100KM)',
+                    color='CO2 (G/KM)', color_continuous_scale='RdBu_r', 
+                    title='Puissance maximale vs Consommation de carburant Vs CO2',
+                    labels={'PUISSANCE MAXIMALE (KW)': 'Puissance maximale du moteur (kW)', 
+                            'CONSOMMATION MIXTE (L/100KM)': 'Consommation mixte de carburant (l/100km)',
+                            'CO2 (G/KM)': 'Émissions de CO2 (g/km)'})
 
-    # Normaliser les valeurs de CO2
-    norm = mcolors.Normalize(vmin=co2.min(), vmax=co2.max())
+    # Ajouter une régression linéaire
+    X = x.values.reshape(-1, 1)
+    reg = LinearRegression().fit(X, y)
+    data_nettoyer['Regression Line'] = reg.predict(X)
 
-    # Tracer le nuage de points avec seaborn et ajouter une régression linéaire
-    plt.figure(figsize=(12, 12))
-    scatter = plt.scatter(x, y, c=co2, cmap=cmap, s=400, norm=norm, alpha=0.5, edgecolor='w', linewidth=0.5)
+    fig.add_trace(go.Scatter(
+        x=data_nettoyer['PUISSANCE MAXIMALE (KW)'],
+        y=data_nettoyer['Regression Line'],
+        mode='lines',
+        name='Ligne de régression',
+        line=dict(color='gray')
+    ))
 
-    sns.regplot(x=x, y=y,scatter=False, color='gray')
+    # Afficher le graphique dans Streamlit
+    st.plotly_chart(fig)
 
-    # Ajouter des étiquettes et un titre
-    plt.title('Puissance maximale vs Consommation de carburant Vs CO2')
-    plt.xlabel('Puissance maximale du moteur (kW)')
-    plt.ylabel('Consommation mixte de carburant (l/100km)')
-    plt.colorbar(scatter, label='Émissions de CO2 (g/km)')
-    plt.grid(True)
-    st.pyplot(plt)
-
-    st.write("#DataViz N°3")
-    # Calculer les émissions de CO2 moyennes par marque
+    st.write("### DataViz N°4")
     co2_by_marque = donnees2013.groupby('MARQUE')['CO2 (G/KM)'].mean().sort_values()
+    co2_by_marque = donnees2013.groupby('MARQUE')['CO2 (G/KM)'].mean().sort_values().reset_index()
+    fig = px.bar(co2_by_marque, x='CO2 (G/KM)', y='MARQUE', orientation='h',
+                title='Comparaison des émissions de CO2 par marque de véhicule',
+                labels={'CO2 (G/KM)': 'Émissions de CO2 moyennes (g/km)', 'MARQUE': 'Marque'},
+                color_discrete_sequence=['skyblue'])
+    fig.update_layout(xaxis=dict(showgrid=True, gridcolor='LightGrey'))
+    st.plotly_chart(fig)
 
-    # Tracer le diagramme à barres
-    plt.figure(figsize=(12, 8))
-    co2_by_marque.plot(kind='barh', color='skyblue')
-    plt.xlabel('Émissions de CO2 moyennes (g/km)')
-    plt.ylabel('Marque')
-    plt.title('1) Comparaison des émissions de CO2 par marque de véhicule')
-    plt.grid(axis='x')
-    st.pyplot(plt)
+    st.write("### DataViz N°5")
+    st.write("Nous observons sur ce graphique une corrélation entre la masse du véhicule et les émissions de CO2")
+    fig = px.scatter(donnees2013, x='MASSE VIDE EURO MAX (KG)', y='CO2 (G/KM)', 
+                 title="Relation entre les émissions de CO2 (G/KM) et la masse des véhicules",
+                 labels={'MASSE VIDE EURO MAX (KG)': 'Masse des véhicules (KG)', 'CO2 (G/KM)': 'Émissions de CO2 (G/KM)'},
+                 color_discrete_sequence=['#A7001E'])
 
-    st.write("DataViz N°4")
+    fig.update_traces(marker=dict(size=12))
+    st.plotly_chart(fig)
+
+    st.write("### DataViz N°6")
     st.write("Ce graphique permet d'observer la corrélation entre les différentes variables. Si nous analysons la variable CO2 (g/km), nous remarquons que les variables les plus corrélées sont les 3 variables de consommations (mixte, urbaine et extra-urbaine), ensuite, la masse du véhicule est aussi très important (0.75 et 0.75 de coefficient) puis arrive ensuite, le modèle (dossier et UTAC) puis le type de carrosserie. Ce grpahique nous confirme l'analyse précédente sur la corrélation entre le type de carburant et les émissions de NOX.")
     oe = OrdinalEncoder()
     # Encodage des données 2013 et reconstruction en df
@@ -280,10 +304,9 @@ if page == pages[3]:
 
     # corrélation
     correlation_matrix = donnees2013_cor.corr()
-    plt.figure(figsize=(20, 10  ))
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-    plt.title('Matrice de corrélation')
-    st.pyplot(plt)
+    fig = px.imshow(correlation_matrix, text_auto=True, color_continuous_scale='turbo', aspect='auto')
+    fig.update_layout(title='Matrice de corrélation', width=4000, height=1000)
+    st.plotly_chart(fig)
              
 
     
