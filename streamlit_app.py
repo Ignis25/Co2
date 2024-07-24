@@ -174,6 +174,17 @@ if page == pages[2]:
         st.write("**GL**: Diesel-électricité rechargeable.")
         if st.button("Fermer la liste des carburants"):
             st.write()
+    st.write(" ")
+    st.write("## Biais du Dataset")
+    st.write("""
+    - **Ancienneté des données :** Le jeu de données date de 2013, les données ne sont plus dans les standards actuels.
+    - **Faux NaN :** Certaines valeurs NaN sont en réalité des valeurs zéro, par exemple pour les véhicules électriques.
+    - **Doublons :** Présence de vrais et faux doublons dans les données.
+    - **Déséquilibre des données :** Le jeu de données est fortement déséquilibré avec 83% des véhicules étant des Mercedes.
+    - **Valeurs aberrantes :** Certaines entrées dans la variable 'Marque' ne sont pas des marques valides (ex : Quatro, Renault Tech).
+    - **Valeurs extrêmes :** Nécessité de consulter des experts pour valider certaines valeurs techniques.
+    """)
+    st.write(" ")
     st.title("Pre-processing et feature engineering")
     st.write("### Étape 1 : Traitement de Nom de Variable")
     st.write("""
