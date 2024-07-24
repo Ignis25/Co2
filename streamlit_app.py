@@ -85,7 +85,7 @@ if add_selectbox == "François vergne":
 
 #Début des pages: 
 if page == pages[0]:
-    st.write(test.head())
+    st.write(donnees2013.head())
     st.title("Introduction")
     st.header("🌍 **Bienvenue dans l'aventure écolo-automobile** !🚗💨")
     st.write(" Vous êtes prêt à plonger dans un projet captivant qui fusionne technologie, environnement et innovation ? Alors attachez vos ceintures ! Nous sommes sur le point d'explorer un sujet brûlant et d'actualité : les émissions de CO2 des véhicules. À l'ère où chaque gramme de CO2 compte dans la lutte contre le changement climatique, notre projet s'inscrit parfaitement dans cette démarche mondiale pour un avenir plus vert et durable.")
