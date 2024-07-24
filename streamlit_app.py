@@ -90,7 +90,6 @@ if add_selectbox == "François vergne":
 
 #Début des pages: 
 if page == pages[0]:
-    st.write(donnees2013.head())
     st.title("Introduction")
     st.header("🌍 **Bienvenue dans l'aventure écolo-automobile** !🚗💨")
     st.write(" Vous êtes prêt à plonger dans un projet captivant qui fusionne technologie, environnement et innovation ? Alors attachez vos ceintures ! Nous sommes sur le point d'explorer un sujet brûlant et d'actualité : les émissions de CO2 des véhicules. À l'ère où chaque gramme de CO2 compte dans la lutte contre le changement climatique, notre projet s'inscrit parfaitement dans cette démarche mondiale pour un avenir plus vert et durable.")
@@ -114,16 +113,22 @@ if page == pages[1]:
     st.write("Grâce à ce jeu de données, il est possible d'entreprendre diverses analyses, telles que l'identification des véhicules les plus émetteurs de CO2, la prédiction de la pollution pour de nouveaux types de véhicules, ou encore l'évaluation de l'impact des caractéristiques techniques sur les émissions polluantes. Ces analyses peuvent contribuer à orienter les politiques environnementales et à promouvoir des choix de consommation plus durables dans le secteur automobile.")
     st.header("Notre équipe :")
     st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
+    st.write("Une description de nous se trouve sur la gauche.")
     
 if page == pages[2]:
     st.title("Exploration des données")
-    st.header("Voici un echantillon de notre jeu de données brutes")
+    st.write("Voici un échantillon des données brutes utilisées dans notre analyse. Les 20 premières lignes du jeu de données sont affichées ci-dessous :")
     st.dataframe(donnees2013.head(20))
+    st.write("### Statistiques Descriptives des Données")
+    st.write("Les statistiques descriptives ci-dessous résument les principales caractéristiques des données numériques du jeu de données, telles que la moyenne, l'écart type, les valeurs minimales et maximales :")
     st.write(donnees2013.describe()) 
     buffer = io.StringIO()
     donnees2013.info(buf=buffer)
     info_str = buffer.getvalue()
+    st.write("### Informations Complètes sur le Jeu de Données")
+    st.write("Les informations suivantes décrivent la structure complète du jeu de données, y compris le type de chaque colonne et le nombre de valeurs manquantes (NaN). Nous remarquons qu'il y a un nombre significatif de valeurs manquantes, ce qui nécessitera une attention particulière pour le traitement des données :")
     st.text(info_str)
+    st.write("")
     if st.button("Certains noms de colonne ont des désignations techniques, souhaitez-vous connaitre la désignation de chacune ?"):
         st.write("**Marque**: Le fabricant du véhicule.")
         st.write("**Modèle dossier**: Nom du modèle de véhicule dans le dossier.")
@@ -169,6 +174,46 @@ if page == pages[2]:
         st.write("**GL**: Diesel-électricité rechargeable.")
         if st.button("Fermer la liste des carburants"):
             st.write()
+    st.title("Pre-processing et feature engineering")
+    st.write("### Étape 1 : Traitement de Nom de Variable")
+    st.write("""
+    - **Transformation de majuscules :** Conversion des noms de variables en majuscules pour uniformiser le jeu de données.
+    - **Modification d’un nom de variable :** Changement de certains noms de variables pour une meilleure clarté et compréhension.
+    """)
+    st.write("### Étape 2 : Conversion en Format de Date")
+    st.write("""
+    - **Format de date :** Une variable était une date au format (mm/aa). Cette variable a été convertie au format de date approprié.
+    """)
+    st.write("### Étape 3 : Gestion des Doublons")
+    st.write("""
+    - **Identification des doublons :** Le jeu de données contient 619 doublons. Il est crucial de déterminer s'ils sont de vrais doublons ou non.
+    - **Recommandations :**
+    - **Identification :** Définir des critères pour identifier les vrais doublons.
+    - **Gestion :** Supprimer ou combiner les doublons en fonction de leur impact sur les analyses.
+    """)
+    st.write("### Étape 4 : Gestion des NaN")
+    st.write("""
+    - **Reconstitution de HC, NOX ou HC+NOX :** Lorsque 2 des 3 colonnes sont connues.
+    - **Véhicules électriques :**
+      Remplissage des NaN par 0 pour les colonnes CO2, CO TYPE I, HC, NOX, HC+NOX et PARTICULES.
+      Remplissage des NaN par 0 pour les colonnes liées aux consommations (urbaine, mixte, extra-urbaine).
+    - **Véhicules Essence-électricité (hybride rechargeable) :**
+      En Urbain : 100% en électrique donc 0.
+      En Extra-Urbain : 5,5L (d'après les sites et commentaires, c'est entre 5,2L et 6L pour les 3 véhicules).
+    - **Autres NaN :**
+      Remplacement des NaN de CO TYPE I, HC, NOX, HC+NOX et PARTICULES par la médiane en fonction du carburant.
+      Remplacement des NaN dans la colonne PARTICULES par la médiane.
+    """)
+    st.write("### Étape 5 : Encodage des Données")
+    st.write("""
+    - **Utilisation de OrdinalEncoder :** En attribuant des valeurs numériques ordonnées, il permet de préserver la relation hiérarchique entre les catégories.
+    - **Analyse de corrélation :** Cela nous permet d'analyser la corrélation entre les variables à l'aide d'une heatmap et de formater le jeu de données pour les étapes ultérieures du machine learning.
+    """)
+    st.write("### Étape 6 : Standardisation (Normalisation Z-Score)")
+    st.write("""
+    - **Utilisation de StandardScaler :** Permet de normaliser les caractéristiques de nos données en les recentrant autour de 0 avec une variance de 1.
+    - **Importance :** Cette normalisation est cruciale lorsque les caractéristiques des données ont des échelles différentes. Cela garantit que notre modèle de machine learning fonctionne efficacement et de manière optimale.
+    """)
             
 #Gestion des Nan
 donnees2013 = donnees2013.rename(columns=lambda x: x.upper())
