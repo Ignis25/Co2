@@ -383,6 +383,11 @@ if page == pages[4]:
     Pour garantir un bon entraînement de notre modèle, nous allons diviser le jeu de données en deux parties : **80 % pour l'entraînement** et **20 % pour les tests**.
     """)
 
+    st.write("Pour comparer les modèles, la Mean Absolute Error (MAE) a été choisie comme métrique principale. Elle a été sélectionnée pour plusieurs raisons. Tout d'abord, son interprétabilité : la MAE a la même unité que la variable cible (g/km de CO2), ce qui permet de comprendre directement l'ampleur des erreurs de prédiction. De plus, elle est moins sensible aux grandes erreurs de prédiction par rapport à la Mean Squared Error (MSE), ce qui la rend plus robuste aux outliers. Pour obtenir une évaluation complète du modèle, d'autres métriques de performance ont également été utilisées. La Mean Squared Error (MSE) calcule la moyenne des différences mises au carré entre les vraies valeurs et les valeurs prédites. Bien que moins interprétable que la MAE, elle pénalise davantage les grandes erreurs, ce qui peut être utile pour certaines applications. La Root Mean Squared Error (RMSE), qui est la racine carrée de la MSE, combine les avantages de la MSE et de l'interprétabilité car elle a la même unité que la variable cible. Ces métriques supplémentaires ont permis de mieux comprendre les performances globales du modèle.")
+    st.write("Mean Absolute Error (MAE) : C'est la moyenne des différences absolues entre les vraies valeurs et les valeurs prédites du modèle. Elle est facilement interprétable au regard de la variable cible, car elle a la même unité.")
+    st.write("Mean Squared Error (MSE) : C'est la moyenne des différences mises au carré entre les vraies valeurs et les valeurs prédites de la variable cible. Elle n'est pas dans la même unité que la variable cible, ce qui rend son interprétation plus complexe. Cette métrique pénalise davantage les grandes erreurs que la MAE. Elle est donc intéressante lorsque nous souhaitons absolument éviter ces cas.")
+    st.write("Root Mean Squared Error (RMSE) : C'est la racine carrée de la Mean Squared Error. Elle pénalise également davantage les grands écarts de prédiction. Elle a la même unité que la variable cible donc elle sera plus interprétable que la MSE.")
+    
 
     #Nettoyage du nombre de colonne
     donnees2013_ml = donnees2013.drop([
@@ -469,18 +474,153 @@ if page == pages[4]:
     rmse = np.sqrt(mse)
 
     # Affichage des résultats dans Streamlit
-    st.write("Mean Absolute Error (MAE) : C'est la moyenne des différences absolues entre les vraies valeurs et les valeurs prédites du modèle. Elle est facilement interprétable au regard de la variable cible, car elle a la même unité.")
     st.write("MAE =", round(mae, 3))
-
     st.write("\n")
-
-    st.write("Mean Squared Error (MSE) : C'est la moyenne des différences mises au carré entre les vraies valeurs et les valeurs prédites de la variable cible. Elle n'est pas dans la même unité que la variable cible, ce qui rend son interprétation plus complexe. Cette métrique pénalise davantage les grandes erreurs que la MAE. Elle est donc intéressante lorsque nous souhaitons absolument éviter ces cas.")
     st.write("MSE =", round(mse, 3))
-
     st.write("\n")
-
-    st.write("Root Mean Squared Error (RMSE) : C'est la racine carrée de la Mean Squared Error. Elle pénalise également davantage les grands écarts de prédiction. Elle a la même unité que la variable cible donc elle sera plus interprétable que la MSE.")
     st.write("RMSE =", round(rmse, 3))
+    # Entraîner le modèle
+    from sklearn.tree import DecisionTreeRegressor
+    dt_reg = DecisionTreeRegressor()
+    dt_reg.fit(X_train, y_train)
+
+    # Générer les tests
+    y_pred_test = dt_reg.predict(X_test)
+
+    # Calcul des scores
+    train_score = round(dt_reg.score(X_train, y_train), 4)
+    test_score = round(dt_reg.score(X_test, y_test), 4)
+
+    # Calcul des métriques
+    mae = mean_absolute_error(y_test, y_pred_test)
+    mse = mean_squared_error(y_test, y_pred_test)
+    rmse = np.sqrt(mse)
+
+    # Affichage des résultats dans Streamlit
+    st.write("## Arbre de régression")
+    st.write(f'Score sur ensemble train: {train_score}')
+    st.write(f'Score sur ensemble test: {test_score}')
+    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
+    st.write("MAE =", round(mae, 3))
+    st.write("MSE =", round(mse, 3))
+    st.write("RMSE =", round(rmse, 3))
+
+    from sklearn.linear_model import LinearRegression
+
+    # Entraîner le modèle
+    lr = LinearRegression()
+    lr.fit(X_train, y_train)
+
+    # Générer les tests
+    y_pred_test = lr.predict(X_test)
+
+    # Calcul des scores
+    train_score = round(lr.score(X_train, y_train), 4)
+    test_score = round(lr.score(X_test, y_test), 4)
+
+    # Calcul des métriques
+    mae = mean_absolute_error(y_test, y_pred_test)
+    mse = mean_squared_error(y_test, y_pred_test)
+    rmse = np.sqrt(mse)
+
+    # Affichage des résultats dans Streamlit
+    st.write("## Régression linéaire")
+    st.write(f'Score sur ensemble train: {train_score}')
+    st.write(f'Score sur ensemble test: {test_score}')
+    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
+    st.write("MAE =", round(mae, 3))
+    st.write("MSE =", round(mse, 3))
+    st.write("RMSE =", round(rmse, 3))
+
+    from sklearn.linear_model import LogisticRegression
+
+    # Entraîner le modèle
+    logr = LogisticRegression()
+    logr.fit(X_train, y_train)
+
+    # Générer les tests
+    y_pred_test = logr.predict(X_test)
+
+    # Calcul des scores
+    train_score = round(logr.score(X_train, y_train), 4)
+    test_score = round(logr.score(X_test, y_test), 4)
+
+    # Calcul des métriques
+    mae = mean_absolute_error(y_test, y_pred_test)
+    mse = mean_squared_error(y_test, y_pred_test)
+    rmse = np.sqrt(mse)
+    
+    # Affichage des résultats dans Streamlit
+    st.write("## Régression logistique")
+    st.write(f'Score sur ensemble train: {train_score}')
+    st.write(f'Score sur ensemble test: {test_score}')
+    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
+    st.write("MAE =", round(mae, 3))
+    st.write("MSE =", round(mse, 3))
+    st.write("RMSE =", round(rmse, 3))
+    
+    
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.ensemble import RandomForestRegressor
+    from sklearn.metrics import mean_squared_error, r2_score
+
+    # Entraîner le modèle
+    rf = RandomForestRegressor(random_state=42)
+    rf.fit(X_train, y_train)
+
+    # Prédictions initiales
+    y_pred_initial = rf.predict(X_test)
+
+    # Évaluation initiale
+    initial_mse = mean_squared_error(y_test, y_pred_initial)
+    initial_r2 = r2_score(y_test, y_pred_initial)
+
+    # Paramètres pour Grid Search
+    param_grid = {
+        'n_estimators': [10, 20, 30],
+        'max_depth': [None, 10, 20, 30],
+        'min_samples_split': [2, 5, 10]
+    }
+
+    # Grid Search avec validation croisée
+    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
+    grid_search.fit(X_train, y_train)
+
+    # Meilleurs paramètres et modèle optimisé
+    best_rf = grid_search.best_estimator_
+    y_pred_optimized = best_rf.predict(X_test)
+
+    # Évaluation des performances
+    optimized_mse = mean_squared_error(y_test, y_pred_optimized)
+    optimized_r2 = r2_score(y_test, y_pred_optimized)
+
+    # Affichage des résultats dans Streamlit
+    st.write("## Grid Search CV avec Random Forest")
+    st.write("Initial Mean Squared Error:", initial_mse)
+    st.write("Initial R^2 Score:", initial_r2)
+    st.write("Meilleurs paramètres :", grid_search.best_params_)
+    st.write("Optimized Mean Squared Error:", optimized_mse)
+    st.write("Optimized R^2 Score:", optimized_r2)
+
+    import xgboost as xgb
+    from sklearn.metrics import mean_squared_error, r2_score
+
+    # Entraîner le modèle
+    xgb_model = xgb.XGBRegressor(objective='reg:squarederror', random_state=42)
+    xgb_model.fit(X_train, y_train)
+
+    # Prédictions
+    y_pred_xgb = xgb_model.predict(X_test)
+
+    # Évaluation des performances
+    xgb_mse = mean_squared_error(y_test, y_pred_xgb)
+    xgb_r2 = r2_score(y_test, y_pred_xgb)
+
+    # Affichage des résultats dans Streamlit
+    st.write("## Modèle XGBoost")
+    st.write("Mean Squared Error (XGBoost):", xgb_mse)
+    st.write("R^2 Score (XGBoost):", xgb_r2)
+
 
 if page == pages[5]:
         st.header("Modélisation 2 : simulation pour un nouveau véhicule")
