@@ -113,7 +113,7 @@ if page == pages[1]:
     st.write("Grâce à ce jeu de données, il est possible d'entreprendre diverses analyses, telles que l'identification des véhicules les plus émetteurs de CO2, la prédiction de la pollution pour de nouveaux types de véhicules, ou encore l'évaluation de l'impact des caractéristiques techniques sur les émissions polluantes. Ces analyses peuvent contribuer à orienter les politiques environnementales et à promouvoir des choix de consommation plus durables dans le secteur automobile.")
     st.header("Notre équipe :")
     st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
-    st.write("Une description de nous se trouve sur la gauche.")
+    st.warning("Une description de nous se trouve sur la gauche de la page.")
     
 if page == pages[2]:
     st.title("Exploration des données")
