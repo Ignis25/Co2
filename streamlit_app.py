@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.colors as mcolors
 from sklearn.preprocessing import OrdinalEncoder
+import io
 
 # Charge le fichier via l'interface utilisateur
 uploaded_file = st.file_uploader("2O13_data.csv", type="csv")
@@ -37,7 +38,7 @@ st.sidebar.write("\n")
 st.sidebar.write("\n")
 st.sidebar.write("\n")
 st.sidebar.write("\n")
-st.sidebar.image("https://www.nuancesdeliege.ch/wp-content/uploads/2018/08/Qui-sommes-nous.png", width = 200)
+st.sidebar.image("https://www.lympho.fr/images/quisommesnous/qui-sommes-nous.jpg", width = 200)
 
 
 # Permettre à l'utilisateur de télécharger un fichier CSV
