@@ -31,7 +31,7 @@ else:
 st.title("Projet Co2")
 st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed969_96670_voiture-propre.jpg", width=300)
 st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert")
-st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
+
 
 
 #Sidebar 
@@ -113,7 +113,7 @@ if page == pages[1]:
     st.write("Ce jeu de données de 2013 offre une mine d'informations précieuses, notamment les caractéristiques techniques des véhicules, les consommations de carburant, les émissions de dioxyde de carbone (CO2) et les émissions de polluants de l'air, conforme à la norme Euro en vigueur. Ces données sont essentielles pour identifier les véhicules les plus émetteurs de CO2 et les plus polluants, ce qui permet de comprendre les caractéristiques techniques influant sur la pollution.")
     st.write("Grâce à ce jeu de données, il est possible d'entreprendre diverses analyses, telles que l'identification des véhicules les plus émetteurs de CO2, la prédiction de la pollution pour de nouveaux types de véhicules, ou encore l'évaluation de l'impact des caractéristiques techniques sur les émissions polluantes. Ces analyses peuvent contribuer à orienter les politiques environnementales et à promouvoir des choix de consommation plus durables dans le secteur automobile.")
     st.header("Notre équipe :")
-    st.write("Colombel Arnaud, Saric Drazen et Vergne François")
+    st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
     
 if page == pages[2]:
     st.title("Exploration des données")
