@@ -28,23 +28,6 @@ else:
     st.info("Veuillez télécharger un fichier CSV.")
 
 
-st.title("Projet Co2")
-st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed969_96670_voiture-propre.jpg", width=300)
-st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert")
-
-
-
-#Sidebar 
-st.sidebar.title("Sommaire")
-pages=["Introduction","Contexte","Exploration des données", "DataVizualization", "Modélisation 1", "Modélisation 2"]
-page=st.sidebar.radio("Naviguer vers", pages)
-st.sidebar.write("\n")
-st.sidebar.write("\n")
-st.sidebar.write("\n")
-st.sidebar.write("\n")
-st.sidebar.image("https://www.lympho.fr/images/quisommesnous/qui-sommes-nous.jpg", width = 200)
-
-
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
 
@@ -71,6 +54,25 @@ if uploaded_file is not None:
         st.stop()
 else:
     st.write("Veuillez télécharger un fichier CSV pour continuer.")
+
+#Début du code pour tout le monde
+
+st.title("Projet Co2")
+st.image("https://cdn.futura-sciences.com/buildsv6/images/wide1920/7/b/2/7b2a2ed969_96670_voiture-propre.jpg", width=300)
+st.title("Émissions de CO2 et Véhicules : À la Conquête d'un Futur Plus Vert")
+
+
+
+#Sidebar 
+st.sidebar.title("Sommaire")
+pages=["Introduction","Contexte","Exploration des données", "DataVizualization", "Modélisation 1", "Modélisation 2"]
+page=st.sidebar.radio("Naviguer vers", pages)
+st.sidebar.write("\n")
+st.sidebar.write("\n")
+st.sidebar.write("\n")
+st.sidebar.write("\n")
+st.sidebar.image("https://www.lympho.fr/images/quisommesnous/qui-sommes-nous.jpg", width = 200)
+
 
  
 # Qui sommes-nous ?
