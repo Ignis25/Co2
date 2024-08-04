@@ -620,6 +620,6 @@ if algo_selected == "Arbre de décision":
     st.write("MAE = 0.12")
     st.write("\n")
     st.write("MSE = 2.004")
-    st.write("\n"
+    st.write("\n")
     st.write("RMSE = 1.416")
    
