@@ -617,7 +617,9 @@ algo_options = ["Arbre de décision", "Arbre de régression", "Régression liné
 algo_selected = st.selectbox("Veuillez choisir un algorythme:",
                               options = algo_options)
 if algo_selected == "Arbre de décision":
-    st.write("MAE = 0.12",
-             "MSE = 2.004",
-             "RMSE = 1.416")
+    st.write("MAE = 0.12")
+    st.write("\n")
+    st.write("MSE = 2.004")
+    st.write("\n"
+    st.write("RMSE = 1.416")
    
