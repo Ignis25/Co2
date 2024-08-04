@@ -456,16 +456,16 @@ if page == pages[4]:
     from sklearn.metrics import mean_absolute_error, mean_squared_error
 
     # Calcul des métriques (assurez-vous que y_test et y_pred_test sont définis)
-    mae = mean_absolute_error(y_test, y_pred_test)
-    mse = mean_squared_error(y_test, y_pred_test)
-    rmse = np.sqrt(mse)
+    mae_dt = mean_absolute_error(y_test, y_pred_test)
+    mse_dt = mean_squared_error(y_test, y_pred_test)
+    rmse_dt = np.sqrt(mse_dt)
 
     # Affichage des résultats dans Streamlit
-    st.write("MAE =", round(mae, 3))
+    st.write("MAE =", round(mae_dt, 3))
     st.write("\n")
-    st.write("MSE =", round(mse, 3))
+    st.write("MSE =", round(mse_dt, 3))
     st.write("\n")
-    st.write("RMSE =", round(rmse, 3))
+    st.write("RMSE =", round(rmse_dt, 3))
     # Entraîner le modèle
     from sklearn.tree import DecisionTreeRegressor
     dt_reg = DecisionTreeRegressor()
@@ -617,4 +617,10 @@ algo_selected = st.selectbox("Veuillez choisir un algorythme:",
                               options = algo_options)
 if algo_selected == "Arbre de décision":
     st.write("Pour rappel les résultats de l'algorythme:")
+    st.write("\n")
+    st.write("MAE =", round(mae_dt, 3))
+    st.write("\n")
+    st.write("MSE =", round(mse_dt, 3))
+    st.write("\n")
+    st.write("RMSE =", round(rmse_dt, 3))
    
