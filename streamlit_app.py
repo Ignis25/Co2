@@ -617,8 +617,4 @@ algo_selected = st.selectbox("Veuillez choisir un algorythme:",
                               options = algo_options)
 if algo_selected == "Arbre de décision":
     st.write("Pour rappel les résultats de l'algorythme:")
-    st.write("MAE =", round(mae, 3))
-    st.write("\n")
-    st.write("MSE =", round(mse, 3))
-    st.write("\n")
-    st.write("RMSE =", round(rmse, 3))
+   
