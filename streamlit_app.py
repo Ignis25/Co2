@@ -611,3 +611,5 @@ if page == pages[4]:
 
 if page == pages[5]:
         st.header("Modélisation 2 : Simulation pour un nouveau véhicule")
+    
+st.write("Veuillez choisir le modèle")
