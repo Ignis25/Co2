@@ -615,10 +615,10 @@ if page == pages[5]:
 algo_options = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique","Grid Search CV avec Random Forest"]
 algo_selected = st.selectbox("Veuillez choisir un algorythme:",
                               options = algo_options)
-    if algo_selected == "Arbre de décision":
-        st.write("Pour rappel les résultats de l'algorythme:")
-        st.write("MAE =", round(mae, 3))
-        st.write("\n")
-        st.write("MSE =", round(mse, 3))
-        st.write("\n")
-        st.write("RMSE =", round(rmse, 3))
+if algo_selected == "Arbre de décision":
+    st.write("Pour rappel les résultats de l'algorythme:")
+    st.write("MAE =", round(mae, 3))
+    st.write("\n")
+    st.write("MSE =", round(mse, 3))
+    st.write("\n")
+    st.write("RMSE =", round(rmse, 3))
