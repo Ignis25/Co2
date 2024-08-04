@@ -612,4 +612,6 @@ if page == pages[4]:
 if page == pages[5]:
         st.header("Modélisation 2 : Simulation pour un nouveau véhicule")
     
-st.write("Veuillez choisir le modèle")
+st.write("Veuillez choisir l'alogorythme")
+choices = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique","Grid Search CV avec Random Forest"]
+selected = st.selectbox("Select an object", choices, index=choices.index(default_value))
