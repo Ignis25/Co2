@@ -360,7 +360,79 @@ if page == pages[3]:
     st.plotly_chart(fig)
 
     
-             
+#Entrainement du modèle en dehors de la page pour avoir les mêmes données en la modélisation 1 et 2
+#Nettoyage du nombre de colonne
+donnees2013_ml = donnees2013.drop([
+    'MARQUE',
+    'MODÈLE DOSSIER',
+    'MODÈLE UTAC',
+    'DÉSIGNATION COMMERCIALE',
+    'CNIT',
+    'TYPE VARIANTE VERSION (TVV)',
+    'BOÎTE DE VITESSE',
+    'CO TYPE I (G/KM)',
+    'HC (G/KM)',
+    'NOX (G/KM)',
+    'HC+NOX (G/KM)',
+    'PARTICULES (G/KM)',
+    'NORME UE',
+    'DATE DE MISE À JOUR'
+], axis=1)
+
+#Isoler la valeur cible
+y = donnees2013_ml['CO2 (G/KM)']
+X = donnees2013_ml.drop(['CO2 (G/KM)'], axis = 1)
+
+#Séparation du jeu de donnée pour l'entrainement et le test. On garde 20% des données pour les tests.
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+
+#utilisation du OneHotEncoder pour la varbiable 'Hybride' car c'est une variable binaire
+ohe = OneHotEncoder(drop='first', sparse_output=False)
+cat_hybride_train = ohe.fit_transform(X_train[['HYBRIDE']])
+cat_hybride_test = ohe.transform(X_test[['HYBRIDE']])
+
+# Encodage de 'CARBURANT', 'CARROSSERIE', 'GAMME' avec OrdinalEncoder
+oe = OrdinalEncoder()
+cat_oe = ['CARBURANT', 'CARROSSERIE', 'GAMME']
+cat_oe_train = oe.fit_transform(X_train[cat_oe])
+cat_oe_test = oe.transform(X_test[cat_oe])
+
+
+# Concaténer les colonnes encodées avec les autres colonnes
+X_train = pd.concat([
+    pd.DataFrame(cat_hybride_train, index=X_train.index, columns=['HYBRIDE']),
+    pd.DataFrame(cat_oe_train, index=X_train.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+    X_train.drop(['HYBRIDE', 'CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+
+
+X_test = pd.concat([
+    pd.DataFrame(cat_hybride_test, index=X_test.index, columns=['HYBRIDE']),
+    pd.DataFrame(cat_oe_test, index=X_test.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+    X_test.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+
+
+#Le StandardScaler nous permet d'appliquer la transformation Z-Score à nos données.
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+st.write("## Arbre de décision")
+    
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report           
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+import xgboost as xgb
+from sklearn.metrics import mean_squared_error, r2_score
 
 if page == pages[4]:
     st.header("Modélisation 1 et analyse de performance")
@@ -376,71 +448,6 @@ if page == pages[4]:
     st.write("Root Mean Squared Error (RMSE) : C'est la racine carrée de la Mean Squared Error. Elle pénalise également davantage les grands écarts de prédiction. Elle a la même unité que la variable cible donc elle sera plus interprétable que la MSE.")
     
 
-    #Nettoyage du nombre de colonne
-    donnees2013_ml = donnees2013.drop([
-        'MARQUE',
-        'MODÈLE DOSSIER',
-        'MODÈLE UTAC',
-        'DÉSIGNATION COMMERCIALE',
-        'CNIT',
-        'TYPE VARIANTE VERSION (TVV)',
-        'BOÎTE DE VITESSE',
-        'CO TYPE I (G/KM)',
-        'HC (G/KM)',
-        'NOX (G/KM)',
-        'HC+NOX (G/KM)',
-        'PARTICULES (G/KM)',
-        'NORME UE',
-        'DATE DE MISE À JOUR'
-    ], axis=1)
-    
-    #Isoler la valeur cible
-    y = donnees2013_ml['CO2 (G/KM)']
-    X = donnees2013_ml.drop(['CO2 (G/KM)'], axis = 1)
-    
-    #Séparation du jeu de donnée pour l'entrainement et le test. On garde 20% des données pour les tests.
-    from sklearn.model_selection import train_test_split
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
-
-    from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
-
-    #utilisation du OneHotEncoder pour la varbiable 'Hybride' car c'est une variable binaire
-    ohe = OneHotEncoder(drop='first', sparse_output=False)
-    cat_hybride_train = ohe.fit_transform(X_train[['HYBRIDE']])
-    cat_hybride_test = ohe.transform(X_test[['HYBRIDE']])
-
-    # Encodage de 'CARBURANT', 'CARROSSERIE', 'GAMME' avec OrdinalEncoder
-    oe = OrdinalEncoder()
-    cat_oe = ['CARBURANT', 'CARROSSERIE', 'GAMME']
-    cat_oe_train = oe.fit_transform(X_train[cat_oe])
-    cat_oe_test = oe.transform(X_test[cat_oe])
-
-
-    # Concaténer les colonnes encodées avec les autres colonnes
-    X_train = pd.concat([
-        pd.DataFrame(cat_hybride_train, index=X_train.index, columns=['HYBRIDE']),
-        pd.DataFrame(cat_oe_train, index=X_train.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
-        X_train.drop(['HYBRIDE', 'CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)
-    ], axis=1)
-
-
-    X_test = pd.concat([
-        pd.DataFrame(cat_hybride_test, index=X_test.index, columns=['HYBRIDE']),
-        pd.DataFrame(cat_oe_test, index=X_test.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
-        X_test.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)
-    ], axis=1)
-
-
-    #Le StandardScaler nous permet d'appliquer la transformation Z-Score à nos données.
-    from sklearn.preprocessing import StandardScaler
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
-    X_test = sc.transform(X_test)
-    st.write("## Arbre de décision")
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.metrics import classification_report
-
     #Entrainer le modèle
     dt_clf = DecisionTreeClassifier()
     dt_clf.fit(X_train, y_train)
@@ -453,22 +460,21 @@ if page == pages[4]:
     st.write(f'Score sur ensemble train: {train_score}')
     st.write(f'Score sur ensemble test: {test_score}')
     st.write("La méthode score est une métrique qui va comparer les résultats de prédictions de votre jeu de données X par rapport à y. Nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. Nous ne sommes donc pas dans un cas d'overfitting. De plus, le score sur le jeu de test est proche de 1 (0,96), nous pouvons donc déduire que notre modèle est performant.")
-    from sklearn.metrics import mean_absolute_error, mean_squared_error
+    
 
     # Calcul des métriques (assurez-vous que y_test et y_pred_test sont définis)
-    mae_dt = mean_absolute_error(y_test, y_pred_test)
-    mse_dt = mean_squared_error(y_test, y_pred_test)
-    rmse_dt = np.sqrt(mse_dt)
+    mae = mean_absolute_error(y_test, y_pred_test)
+    mse = mean_squared_error(y_test, y_pred_test)
+    rmse = np.sqrt(mse)
 
     # Affichage des résultats dans Streamlit
-    st.write("MAE =", round(mae_dt, 3))
+    st.write("MAE =", round(mae, 3))
     st.write("\n")
-    st.write("MSE =", round(mse_dt, 3))
+    st.write("MSE =", round(mse, 3))
     st.write("\n")
-    st.write("RMSE =", round(rmse_dt, 3))
-    
+    st.write("RMSE =", round(rmse, 3))
     # Entraîner le modèle
-    from sklearn.tree import DecisionTreeRegressor
+    
     dt_reg = DecisionTreeRegressor()
     dt_reg.fit(X_train, y_train)
 
@@ -492,8 +498,6 @@ if page == pages[4]:
     st.write("MAE =", round(mae, 3))
     st.write("MSE =", round(mse, 3))
     st.write("RMSE =", round(rmse, 3))
-
-    from sklearn.linear_model import LinearRegression
 
     # Entraîner le modèle
     lr = LinearRegression()
@@ -520,8 +524,6 @@ if page == pages[4]:
     st.write("MSE =", round(mse, 3))
     st.write("RMSE =", round(rmse, 3))
 
-    from sklearn.linear_model import LogisticRegression
-
     # Entraîner le modèle
     logr = LogisticRegression()
     logr.fit(X_train, y_train)
@@ -547,11 +549,6 @@ if page == pages[4]:
     st.write("MSE =", round(mse, 3))
     st.write("RMSE =", round(rmse, 3))
     
-    
-    from sklearn.model_selection import GridSearchCV
-    from sklearn.ensemble import RandomForestRegressor
-    from sklearn.metrics import mean_squared_error, r2_score
-
     # Entraîner le modèle
     rf = RandomForestRegressor(random_state=42)
     rf.fit(X_train, y_train)
@@ -590,9 +587,6 @@ if page == pages[4]:
     st.write("Optimized Mean Squared Error:", optimized_mse)
     st.write("Optimized R^2 Score:", optimized_r2)
 
-    import xgboost as xgb
-    from sklearn.metrics import mean_squared_error, r2_score
-
     # Entraîner le modèle
     xgb_model = xgb.XGBRegressor(objective='reg:squarederror', random_state=42)
     xgb_model.fit(X_train, y_train)
@@ -613,13 +607,84 @@ if page == pages[4]:
 if page == pages[5]:
         st.header("Modélisation 2 : Simulation pour un nouveau véhicule")
     
-algo_options = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique","Grid Search CV avec Random Forest"]
-algo_selected = st.selectbox("Veuillez choisir un algorythme:",
+        algo_options = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique","Grid Search CV avec Random Forest"]
+        algo_selected = st.selectbox("Veuillez choisir un algorythme:",
                               options = algo_options)
-if algo_selected == "Arbre de décision":
-    st.write("MAE = 0.12")
-    st.write("\n")
-    st.write("MSE = 2.004")
-    st.write("\n")
-    st.write("RMSE = 1.416")
-   
+        if algo_selected == "Arbre de décision":
+            st.write("MAE = 0.12")
+            st.write("\n")
+            st.write("MSE = 2.004")
+            st.write("\n")
+            st.write("RMSE = 1.416")
+        
+        st.write("Veuillez renseigner le type de carburant :")
+        carburant = st.selectbox('CARBURANT', ['GO', 'ES', 'EH', 'GP/ES', 'ES/GP', 'ES/GN', 'GN/ES', 'FE', 'GH', 'GN', 'EL', 'EE'])
+
+        st.write("Veuillez indiquer si le véhicule est hybride :")
+        hybride = st.selectbox('HYBRIDE', ['oui', 'non'])
+
+        st.write("Veuillez entrer la puissance administrative :")
+        puissance_administrative = st.slider('PUISSANCE ADMINISTRATIVE', min_value=1, max_value=10, value=1)
+
+        st.write("Veuillez entrer la puissance maximale (KW) :")
+        puissance_maximale = st.slider('PUISSANCE MAXIMALE (KW)', min_value=0.0, max_value=600.0, value=0.0)
+
+        st.write("Veuillez entrer la consommation urbaine (L/100KM) :")
+        conso_urbaine = st.slider('CONSOMMATION URBAINE (L/100KM)', min_value=0.0, max_value=50.0, value=0.0)
+
+        st.write("Veuillez entrer la consommation extra-urbaine (L/100KM) :")
+        conso_extra_urbaine = st.slider('CONSOMMATION EXTRA-URBAINE (L/100KM)', min_value=0.0, max_value=50.0, value=0.0)
+
+        st.write("Veuillez entrer la consommation mixte (L/100KM) :")
+        conso_mixte = st.slider('CONSOMMATION MIXTE (L/100KG)', min_value=0.0, max_value=50.0, value=0.0)
+
+        st.write("Veuillez entrer la masse vide minimum (KG) :")
+        masse_vide_min = st.slider('MASSE VIDE EURO MIN (KG)', min_value=0, max_value=3500, value=0)
+
+        st.write("Veuillez entrer la masse vide maximum (KG) :")
+        masse_vide_max = st.slider('MASSE VIDE EURO MAX (KG)', min_value=0, max_value=3500, value=0)
+
+        st.write("Veuillez renseigner le type de carrosserie :")
+        carrosserie = st.selectbox('CARROSSERIE', ['MINIBUS', 'BERLINE', 'COUPE', 'COMBISPACE', 'BREAK', 'TS TERRAINS/CHEMINS', 'MONOSPACE COMPACT', 'MINISPACE', 'CABRIOLET', 'MONOSPACE'])
+
+        st.write("Veuillez renseigner la gamme du véhicule :")
+        gamme = st.selectbox('GAMME', ['MOY-SUPER', 'LUXE', 'MOY-INFER', 'INFERIEURE', 'SUPERIEURE', 'ECONOMIQUE'])
+
+        # Enregistrement dans un tableau
+        donnees_mod2 = {
+            'CARBURANT': [carburant],
+            'HYBRIDE': [hybride],
+            'PUISSANCE ADMINISTRATIVE': [puissance_administrative],
+            'PUISSANCE MAXIMALE (KW)': [puissance_maximale],
+            'CONSOMMATION URBAINE (L/100KM)': [conso_urbaine],
+            'CONSOMMATION EXTRA-URBAINE (L/100KM)': [conso_extra_urbaine],
+            'CONSOMMATION MIXTE (L/100KM)': [conso_mixte],
+            'MASSE VIDE EURO MIN (KG)': [masse_vide_min],
+            'MASSE VIDE EURO MAX (KG)': [masse_vide_max],
+            'CARROSSERIE': [carrosserie],
+            'GAMME': [gamme]
+        }
+
+        df_mod2 = pd.DataFrame(donnees_mod2)
+
+        #utilisation du OneHotEncoder pour la varbiable 'Hybride' car c'est une variable binaire
+        cat_hybride_df_mod2 = ohe.transform(df_mod2[['HYBRIDE']])
+
+        # Encodage de 'CARBURANT', 'CARROSSERIE', 'GAMME' avec OrdinalEncoder
+        cat_oe_df_mod2 = oe.transform(df_mod2[cat_oe])
+
+
+        # Concaténer les colonnes encodées avec les autres colonnes
+        df_mod2 = pd.concat([
+            pd.DataFrame(cat_hybride_df_mod2, index=df_mod2.index, columns=['HYBRIDE']),
+            pd.DataFrame(cat_oe_df_mod2, index=df_mod2.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+            df_mod2.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+
+        #Entrainement du modèle
+        dt_reg = DecisionTreeRegressor()
+        dt_reg.fit(X_train, y_train)
+
+        # Générer la prédiction
+        y_pred = dt_reg.predict(df_mod2)
+        st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
+        st.header(y_pred[0])
