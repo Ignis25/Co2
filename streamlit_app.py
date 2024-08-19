@@ -420,7 +420,6 @@ from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
-st.write("## Arbre de décision")
     
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report           
@@ -434,6 +433,133 @@ from sklearn.metrics import mean_squared_error, r2_score
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error, r2_score
 
+
+
+#Entrainer le modèle pour DecisionTreeClassifier
+dt_clf = DecisionTreeClassifier()
+dt_clf.fit(X_train, y_train)
+
+#Générer les tests DecisionTreeClassifier
+y_pred_test_clf = dt_clf.predict(X_test)
+
+# Calcul des scores DecisionTreeClassifier
+train_score_clf = round(dt_clf.score(X_train, y_train), 4)
+test_score_clf = round(dt_clf.score(X_test, y_test), 4)
+
+# Calcul des métriques DecisionTreeClassifier
+mae_clf = mean_absolute_error(y_test, y_pred_test_clf)
+mse_clf = mean_squared_error(y_test, y_pred_test_clf)
+rmse_clf = np.sqrt(mse_clf)
+
+
+
+
+# Entraîner le modèle DecisionTreeRegressor
+dt_reg = DecisionTreeRegressor()
+dt_reg.fit(X_train, y_train)
+
+# Générer les tests DecisionTreeRegressor
+y_pred_test_reg = dt_reg.predict(X_test)
+
+# Calcul des scores DecisionTreeRegressor
+train_score_reg = round(dt_reg.score(X_train, y_train), 4)
+test_score_reg = round(dt_reg.score(X_test, y_test), 4)
+
+# Calcul des métriques DecisionTreeRegressor
+mae_reg = mean_absolute_error(y_test, y_pred_test_reg)
+mse_reg = mean_squared_error(y_test, y_pred_test_reg)
+rmse_reg = np.sqrt(mse_reg)
+
+
+
+# Entraîner le modèle LinearRegression
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+# Générer les tests LinearRegression
+y_pred_test_lr = lr.predict(X_test)
+
+# Calcul des scores LinearRegression
+train_score_lr = round(lr.score(X_train, y_train), 4)
+test_score_lr = round(lr.score(X_test, y_test), 4)
+
+# Calcul des métriques LinearRegression
+mae_lr = mean_absolute_error(y_test, y_pred_test_lr)
+mse_lr = mean_squared_error(y_test, y_pred_test_lr)
+rmse_lr = np.sqrt(mse_lr)
+
+
+
+
+# Entraîner le modèle LogisticRegression
+logr = LogisticRegression()
+logr.fit(X_train, y_train)
+
+# Générer les tests LogisticRegression
+y_pred_test_logr = logr.predict(X_test)
+
+# Calcul des scores LogisticRegression
+train_score_logr = round(logr.score(X_train, y_train), 4)
+test_score_logr = round(logr.score(X_test, y_test), 4)
+
+# Calcul des métriques LogisticRegression
+mae_logr = mean_absolute_error(y_test, y_pred_test_logr)
+mse_logr = mean_squared_error(y_test, y_pred_test_logr)
+rmse_logr = np.sqrt(mse_logr)
+
+
+
+
+#97% à 98% des données ont un carburant 'ES' ou 'GO'. On prépare donc un test pour observer les résultats sur les données en déhors de ces 2 types de carburant.
+#Nous allons réperer les 2 valeurs ayant un nombre d'occurences élevé pour repérer les 'ES' et 'GO' pour ensuite les enlever dans notre comparaison de y_test et y_pred_test
+
+# Obtenir les valeurs uniques et leurs occurrences pour la deuxième colonne de X_test
+valeurs_uniques, nombre_occurrences = np.unique(X_test[:, 1], return_counts=True)
+
+for valeur, occurrence in zip(valeurs_uniques, nombre_occurrences):
+    print(f'Valeur: {valeur}, Nombre d\'occurrences: {occurrence}')
+
+# Trouver les deux valeurs avec les occurrences les plus élevées
+indices_top2 = np.argsort(nombre_occurrences)[-2:]
+valeurs_top2 = valeurs_uniques[indices_top2]
+
+# Filtrer X_test pour exclure ces deux valeurs
+ind_x_test_horsGOES  = np.where((X_test[:, 1] != valeurs_top2[0]) & (X_test[:, 1] != valeurs_top2[1]))[0]
+
+
+# Extraire les lignes spécifiques de X_test
+X_test_horsGOES = X_test[ind_x_test_horsGOES]
+
+# Convertir y_test et y_pred_test en numpy arrays pour éviter le problème d'index
+y_test_array = y_test.to_numpy()
+
+# Extraire les valeurs correspondantes de y_test et y_pred_test
+y_test_horsGOES = y_test_array[ind_x_test_horsGOES]
+y_pred_test_clf_horsGOES = y_pred_test_clf[ind_x_test_horsGOES]
+y_pred_test_reg_horsGOES = y_pred_test_reg[ind_x_test_horsGOES]
+y_pred_test_lr_horsGOES = y_pred_test_lr[ind_x_test_horsGOES]
+y_pred_test_logr_horsGOES = y_pred_test_logr[ind_x_test_horsGOES]
+
+# Calcul des métriques DecisionTreeClassifier
+mae_clf_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_clf_horsGOES)
+mse_clf_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_clf_horsGOES)
+rmse_clf_horsGOES = np.sqrt(mse_clf_horsGOES)
+
+# Calcul des métriques DecisionTreeRegressor
+mae_reg_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_reg_horsGOES)
+mse_reg_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_reg_horsGOES)
+rmse_reg_horsGOES = np.sqrt(mse_reg_horsGOES)
+
+# Calcul des métriques LinearRegression
+mae_lr_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_lr_horsGOES)
+mse_lr_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_lr_horsGOES)
+rmse_lr_horsGOES = np.sqrt(mse_lr_horsGOES)
+
+# Calcul des métriques LogisticRegression
+mae_logr_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_logr_horsGOES)
+mse_logr_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_logr_horsGOES)
+rmse_logr_horsGOES = np.sqrt(mse_logr_horsGOES)
+
 if page == pages[4]:
     st.header("Modélisation 1 et analyse de performance")
     st.warning("""
@@ -446,177 +572,130 @@ if page == pages[4]:
     st.write("Mean Absolute Error (MAE) : C'est la moyenne des différences absolues entre les vraies valeurs et les valeurs prédites du modèle. Elle est facilement interprétable au regard de la variable cible, car elle a la même unité.")
     st.write("Mean Squared Error (MSE) : C'est la moyenne des différences mises au carré entre les vraies valeurs et les valeurs prédites de la variable cible. Elle n'est pas dans la même unité que la variable cible, ce qui rend son interprétation plus complexe. Cette métrique pénalise davantage les grandes erreurs que la MAE. Elle est donc intéressante lorsque nous souhaitons absolument éviter ces cas.")
     st.write("Root Mean Squared Error (RMSE) : C'est la racine carrée de la Mean Squared Error. Elle pénalise également davantage les grands écarts de prédiction. Elle a la même unité que la variable cible donc elle sera plus interprétable que la MSE.")
-    
+    st.warning("""
+    97% à 98% des données ont un carburant 'ES' ou 'GO'. Si nos modèles sont très performant pour ces 2 types de carburant, ils auront des scores proches de 97% à 98% de bonnes réponses.
+    Or, ils peuvent donner de mauvaises prédictions sur les autres types de carburant. Donc, nous observerons aussi les métriques en excluant ces 2 types de carburant.""")
 
-    #Entrainer le modèle
-    dt_clf = DecisionTreeClassifier()
-    dt_clf.fit(X_train, y_train)
-
-    #Générer les tests
-    y_pred_test = dt_clf.predict(X_test)
-    train_score = round(dt_clf.score(X_train, y_train), 4)
-    test_score = round(dt_clf.score(X_test, y_test), 4)
-
-    st.write(f'Score sur ensemble train: {train_score}')
-    st.write(f'Score sur ensemble test: {test_score}')
+    # Affichage des résultats de l'arbre de décision dans Streamlit
+    st.write("## Arbre de décision")
+    st.write(f'Score sur ensemble train: {train_score_clf}')
+    st.write(f'Score sur ensemble test: {test_score_clf}')
     st.write("La méthode score est une métrique qui va comparer les résultats de prédictions de votre jeu de données X par rapport à y. Nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. Nous ne sommes donc pas dans un cas d'overfitting. De plus, le score sur le jeu de test est proche de 1 (0,96), nous pouvons donc déduire que notre modèle est performant.")
-    
+    st.write("MAE =", round(mae_clf, 3))
+    st.write("MSE =", round(mse_clf, 3))
+    st.write("RMSE =", round(rmse_clf, 3))
+    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
+    st.write("MAE =", round(mae_clf_horsGOES, 3))
+    st.write("MSE =", round(mse_clf_horsGOES, 3))
+    st.write("RMSE =", round(rmse_clf_horsGOES, 3))
 
-    # Calcul des métriques (assurez-vous que y_test et y_pred_test sont définis)
-    mae = mean_absolute_error(y_test, y_pred_test)
-    mse = mean_squared_error(y_test, y_pred_test)
-    rmse = np.sqrt(mse)
-
-    # Affichage des résultats dans Streamlit
-    st.write("MAE =", round(mae, 3))
-    st.write("\n")
-    st.write("MSE =", round(mse, 3))
-    st.write("\n")
-    st.write("RMSE =", round(rmse, 3))
-    # Entraîner le modèle
-    
-    dt_reg = DecisionTreeRegressor()
-    dt_reg.fit(X_train, y_train)
-
-    # Générer les tests
-    y_pred_test = dt_reg.predict(X_test)
-
-    # Calcul des scores
-    train_score = round(dt_reg.score(X_train, y_train), 4)
-    test_score = round(dt_reg.score(X_test, y_test), 4)
-
-    # Calcul des métriques
-    mae = mean_absolute_error(y_test, y_pred_test)
-    mse = mean_squared_error(y_test, y_pred_test)
-    rmse = np.sqrt(mse)
-
-    # Affichage des résultats dans Streamlit
+    # Affichage des résultats de l'arbre de régression dans Streamlit
     st.write("## Arbre de régression")
-    st.write(f'Score sur ensemble train: {train_score}')
-    st.write(f'Score sur ensemble test: {test_score}')
+    st.write(f'Score sur ensemble train: {train_score_reg}')
+    st.write(f'Score sur ensemble test: {test_score_reg}')
     st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
-    st.write("MAE =", round(mae, 3))
-    st.write("MSE =", round(mse, 3))
-    st.write("RMSE =", round(rmse, 3))
+    st.write("MAE =", round(mae_reg, 3))
+    st.write("MSE =", round(mse_reg, 3))
+    st.write("RMSE =", round(rmse_reg, 3))
+    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
+    st.write("MAE =", round(mae_reg_horsGOES, 3))
+    st.write("MSE =", round(mse_reg_horsGOES, 3))
+    st.write("RMSE =", round(rmse_reg_horsGOES, 3))
 
-    # Entraîner le modèle
-    lr = LinearRegression()
-    lr.fit(X_train, y_train)
-
-    # Générer les tests
-    y_pred_test = lr.predict(X_test)
-
-    # Calcul des scores
-    train_score = round(lr.score(X_train, y_train), 4)
-    test_score = round(lr.score(X_test, y_test), 4)
-
-    # Calcul des métriques
-    mae = mean_absolute_error(y_test, y_pred_test)
-    mse = mean_squared_error(y_test, y_pred_test)
-    rmse = np.sqrt(mse)
-
-    # Affichage des résultats dans Streamlit
+    # Affichage des résultats de la régression linéaire dans Streamlit 
     st.write("## Régression linéaire")
-    st.write(f'Score sur ensemble train: {train_score}')
-    st.write(f'Score sur ensemble test: {test_score}')
+    st.write(f'Score sur ensemble train: {train_score_lr}')
+    st.write(f'Score sur ensemble test: {test_score_lr}')
     st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
-    st.write("MAE =", round(mae, 3))
-    st.write("MSE =", round(mse, 3))
-    st.write("RMSE =", round(rmse, 3))
+    st.write("MAE =", round(mae_lr, 3))
+    st.write("MSE =", round(mse_lr, 3))
+    st.write("RMSE =", round(rmse_lr, 3))
+    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
+    st.write("MAE =", round(mae_lr_horsGOES, 3))
+    st.write("MSE =", round(mse_lr_horsGOES, 3))
+    st.write("RMSE =", round(rmse_lr_horsGOES, 3))
 
-    # Entraîner le modèle
-    logr = LogisticRegression()
-    logr.fit(X_train, y_train)
-
-    # Générer les tests
-    y_pred_test = logr.predict(X_test)
-
-    # Calcul des scores
-    train_score = round(logr.score(X_train, y_train), 4)
-    test_score = round(logr.score(X_test, y_test), 4)
-
-    # Calcul des métriques
-    mae = mean_absolute_error(y_test, y_pred_test)
-    mse = mean_squared_error(y_test, y_pred_test)
-    rmse = np.sqrt(mse)
-
-    # Affichage des résultats dans Streamlit
+    # Affichage des résultats de la régression logistic dans Streamlit 
     st.write("## Régression logistique")
-    st.write(f'Score sur ensemble train: {train_score}')
-    st.write(f'Score sur ensemble test: {test_score}')
+    st.write(f'Score sur ensemble train: {train_score_logr}')
+    st.write(f'Score sur ensemble test: {test_score_logr}')
     st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
-    st.write("MAE =", round(mae, 3))
-    st.write("MSE =", round(mse, 3))
-    st.write("RMSE =", round(rmse, 3))
+    st.write("MAE =", round(mae_logr, 3))
+    st.write("MSE =", round(mse_logr, 3))
+    st.write("RMSE =", round(rmse_logr, 3))
+    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
+    st.write("MAE =", round(mae_clf_horsGOES, 3))
+    st.write("MSE =", round(mse_clf_horsGOES, 3))
+    st.write("RMSE =", round(rmse_clf_horsGOES, 3))
+
+
+    st.warning("""
+    Les modèles Grid Search et XGBoost nécessitent plusieurs minutes pour se charger. C'est pourquoi nous vous offrons la possibilité de les activer uniquement à votre demande ci-dessous.
+    """)
+    algo_options_ml = ["Aucun Choix","Grid Search CV avec Random Forest", "Modèle XGBoost"]
+    algo_selected_ml = st.selectbox("Choisir le modèle :",
+                              options = algo_options_ml)
+    if algo_selected_ml  == "Grid Search CV avec Random Forest":
+        # Entraîner le modèle RandomForestRegressor
+        rf = RandomForestRegressor(random_state=42)
+        rf.fit(X_train, y_train)
+
+        # Prédictions initiales RandomForestRegressor
+        y_pred_initial = rf.predict(X_test)
     
-    # Entraîner le modèle
-    rf = RandomForestRegressor(random_state=42)
-    rf.fit(X_train, y_train)
+        # Évaluation initiale RandomForestRegressor
+        initial_mse = mean_squared_error(y_test, y_pred_initial)
+        initial_r2 = r2_score(y_test, y_pred_initial)
 
-    # Prédictions initiales
-    y_pred_initial = rf.predict(X_test)
+        # Paramètres pour Grid Search
+        param_grid = {
+            'n_estimators': [10, 20, 30],
+            'max_depth': [None, 10, 20, 30],
+            'min_samples_split': [2, 5, 10]
+        }
 
-    # Évaluation initiale
-    initial_mse = mean_squared_error(y_test, y_pred_initial)
-    initial_r2 = r2_score(y_test, y_pred_initial)
+        # Grid Search avec validation croisée
+        grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
+        grid_search.fit(X_train, y_train)
 
-    # Paramètres pour Grid Search
-    param_grid = {
-        'n_estimators': [10, 20, 30],
-        'max_depth': [None, 10, 20, 30],
-        'min_samples_split': [2, 5, 10]
-    }
+        # Meilleurs paramètres et modèle optimisé
+        best_rf = grid_search.best_estimator_
+        y_pred_optimized = best_rf.predict(X_test)
 
-    # Grid Search avec validation croisée
-    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
-    grid_search.fit(X_train, y_train)
+        # Évaluation des performances
+        optimized_mse = mean_squared_error(y_test, y_pred_optimized)
+        optimized_r2 = r2_score(y_test, y_pred_optimized)
 
-    # Meilleurs paramètres et modèle optimisé
-    best_rf = grid_search.best_estimator_
-    y_pred_optimized = best_rf.predict(X_test)
+        # Affichage des résultats dans Streamlit
+        st.write("## Grid Search CV avec Random Forest")
+        st.write("Initial Mean Squared Error:", initial_mse)
+        st.write("Initial R^2 Score:", initial_r2)
+        st.write("Meilleurs paramètres :", grid_search.best_params_)
+        st.write("Optimized Mean Squared Error:", optimized_mse)
+        st.write("Optimized R^2 Score:", optimized_r2)
 
-    # Évaluation des performances
-    optimized_mse = mean_squared_error(y_test, y_pred_optimized)
-    optimized_r2 = r2_score(y_test, y_pred_optimized)
+    if algo_selected_ml  == "Modèle XGBoost":
+        # Entraîner le modèle
+        xgb_model = xgb.XGBRegressor(objective='reg:squarederror', random_state=42)
+        xgb_model.fit(X_train, y_train)
 
-    # Affichage des résultats dans Streamlit
-    st.write("## Grid Search CV avec Random Forest")
-    st.write("Initial Mean Squared Error:", initial_mse)
-    st.write("Initial R^2 Score:", initial_r2)
-    st.write("Meilleurs paramètres :", grid_search.best_params_)
-    st.write("Optimized Mean Squared Error:", optimized_mse)
-    st.write("Optimized R^2 Score:", optimized_r2)
+        # Prédictions
+        y_pred_xgb = xgb_model.predict(X_test)
 
-    # Entraîner le modèle
-    xgb_model = xgb.XGBRegressor(objective='reg:squarederror', random_state=42)
-    xgb_model.fit(X_train, y_train)
+        # Évaluation des performances
+        xgb_mse = mean_squared_error(y_test, y_pred_xgb)
+        xgb_r2 = r2_score(y_test, y_pred_xgb)
 
-    # Prédictions
-    y_pred_xgb = xgb_model.predict(X_test)
-
-    # Évaluation des performances
-    xgb_mse = mean_squared_error(y_test, y_pred_xgb)
-    xgb_r2 = r2_score(y_test, y_pred_xgb)
-
-    # Affichage des résultats dans Streamlit
-    st.write("## Modèle XGBoost")
-    st.write("Mean Squared Error (XGBoost):", xgb_mse)
-    st.write("R^2 Score (XGBoost):", xgb_r2)
+        # Affichage des résultats dans Streamlit
+        st.write("## Modèle XGBoost")
+        st.write("Mean Squared Error (XGBoost):", xgb_mse)
+        st.write("R^2 Score (XGBoost):", xgb_r2)
 
 
 if page == pages[5]:
         st.header("Modélisation 2 : Simulation pour un nouveau véhicule")
-    
-        algo_options = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique","Grid Search CV avec Random Forest"]
-        algo_selected = st.selectbox("Veuillez choisir un algorythme:",
-                              options = algo_options)
-        if algo_selected == "Arbre de décision":
-            st.write("MAE = 0.12")
-            st.write("\n")
-            st.write("MSE = 2.004")
-            st.write("\n")
-            st.write("RMSE = 1.416")
         
+        #Choix des variables pour le véhicule "test" de notre modélisation 2
         st.write("Veuillez renseigner le type de carburant :")
         carburant = st.selectbox('CARBURANT', ['GO', 'ES', 'EH', 'GP/ES', 'ES/GP', 'ES/GN', 'GN/ES', 'FE', 'GH', 'GN', 'EL', 'EE'])
 
@@ -680,11 +759,46 @@ if page == pages[5]:
             pd.DataFrame(cat_oe_df_mod2, index=df_mod2.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
             df_mod2.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
 
-        #Entrainement du modèle
-        dt_reg = DecisionTreeRegressor()
-        dt_reg.fit(X_train, y_train)
+        algo_options = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique"]
+        algo_selected = st.selectbox("Veuillez choisir un algorythme:",
+                              options = algo_options)
+        
+        if algo_selected == "Arbre de décision":
+            st.write("MAE =", round(mae_clf, 3))
+            st.write("MSE =", round(mse_clf, 3))
+            st.write("RMSE =", round(rmse_clf, 3))
 
-        # Générer la prédiction
-        y_pred = dt_reg.predict(df_mod2)
-        st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
-        st.header(y_pred[0])
+            # Générer la prédiction
+            y_pred_mod2_clf = dt_clf.predict(df_mod2)
+            st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
+            st.header(y_pred_mod2_clf[0])
+
+        if algo_selected == "Arbre de régression":
+            st.write("MAE =", round(mae_reg, 3))
+            st.write("MSE =", round(mse_reg, 3))
+            st.write("RMSE =", round(rmse_reg, 3))
+
+            # Générer la prédiction
+            y_pred_mod2_reg = dt_reg.predict(df_mod2)
+            st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
+            st.header(y_pred_mod2_reg[0])
+
+        if algo_selected == "Régression linéaire":
+            st.write("MAE =", round(mae_lr, 3))
+            st.write("MSE =", round(mse_lr, 3))
+            st.write("RMSE =", round(rmse_lr, 3))
+
+            # Générer la prédiction
+            y_pred_mod2_lr = lr.predict(df_mod2)
+            st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
+            st.header(y_pred_mod2_lr[0])
+
+        if algo_selected == "Régression logistique":
+            st.write("MAE =", round(mae_logr, 3))
+            st.write("MSE =", round(mse_logr, 3))
+            st.write("RMSE =", round(rmse_logr, 3))
+
+            # Générer la prédiction
+            y_pred_mod2_logr = logr.predict(df_mod2)
+            st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
+            st.header(y_pred_mod2_logr[0])
