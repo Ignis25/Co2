@@ -12,6 +12,7 @@ from sklearn.linear_model import LinearRegression
 import io
 import plotly.express as px
 import plotly.graph_objects as go
+@st.cache_data
 
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
@@ -386,7 +387,7 @@ X = donnees2013_ml.drop(['CO2 (G/KM)'], axis = 1)
 #Séparation du jeu de donnée pour l'entrainement et le test. On garde 20% des données pour les tests.
 from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
 
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 
