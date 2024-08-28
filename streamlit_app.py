@@ -476,6 +476,7 @@ def train_logistic_regression(X_train, y_train):
 
 logr = train_logistic_regression(X_train, y_train)
 
+
 # Sauvegarde du modèle avec Joblib
 joblib.dump(dt_clf, 'dt_clf_model.pkl')
 joblib.dump(dt_reg, 'dt_reg_model.pkl')
@@ -488,26 +489,26 @@ dt_reg = joblib.load('dt_reg_model.pkl')
 lr = joblib.load('lr_model.pkl')
 logr = joblib.load('logr_model.pkl')
 
+
 # Calcul des scores pour chaque modèle après l'entraînement
 
 # Pour l'arbre de décision
-train_score_clf = dt_clf.score(X_train, y_train)
-test_score_clf = dt_clf.score(X_test, y_test)
+train_score_clf = round(dt_clf.score(X_train, y_train),4)
+test_score_clf = round(dt_clf.score(X_test, y_test),4)
 
 # Pour l'arbre de régression
-train_score_reg = dt_reg.score(X_train, y_train)
-test_score_reg = dt_reg.score(X_test, y_test)
+train_score_reg = round(dt_reg.score(X_train, y_train),4)
+test_score_reg = round(dt_reg.score(X_test, y_test),4)
 
 # Pour la régression linéaire
-train_score_lr = lr.score(X_train, y_train)
-test_score_lr = lr.score(X_test, y_test)
+train_score_lr = round(lr.score(X_train, y_train),4)
+test_score_lr = round(lr.score(X_test, y_test),4)
 
 # Pour la régression logistique
-train_score_logr = logr.score(X_train, y_train)
-test_score_logr = logr.score(X_test, y_test)
+train_score_logr = round(logr.score(X_train, y_train),4)
+test_score_logr = round(logr.score(X_test, y_test),4)
 
 # Calcul des métriques pour les modèles
-@st.cache_resource
 def calculate_metrics(_model, X_test, y_test):
     y_pred = _model.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
@@ -523,7 +524,8 @@ mae_logr, mse_logr, rmse_logr, y_pred_test_logr = calculate_metrics(logr, X_test
 #97% à 98% des données ont un carburant 'ES' ou 'GO'. On prépare donc un test pour observer les résultats sur les données en déhors de ces 2 types de carburant.
 #Nous allons réperer les 2 valeurs ayant un nombre d'occurences élevé pour repérer les 'ES' et 'GO' pour ensuite les enlever dans notre comparaison de y_test et y_pred_test
 # Calcul des métriques pour les modèles
-@st.cache_resource
+
+
 def calculate_metrics_horsGOES(_model, X_test, y_test):
     # Obtenir les valeurs uniques et leurs occurrences pour la deuxième colonne de X_test
     valeurs_uniques, nombre_occurrences = np.unique(X_test[:, 1], return_counts=True)
@@ -559,7 +561,6 @@ mae_clf_horsGOES, mse_clf_horsGOES, rmse_clf_horsGOES = calculate_metrics_horsGO
 mae_reg_horsGOES, mse_reg_horsGOES, rmse_reg_horsGOES = calculate_metrics_horsGOES(dt_reg, X_test, y_test)
 mae_lr_horsGOES, mse_lr_horsGOES, rmse_lr_horsGOES = calculate_metrics_horsGOES(lr, X_test, y_test)
 mae_logr_horsGOES, mse_logr_horsGOES, rmse_logr_horsGOES = calculate_metrics_horsGOES(logr, X_test, y_test)
-
 
 if page == pages[4]:
     st.header("Modélisation 1 et analyse de performance")
@@ -691,6 +692,7 @@ if page == pages[4]:
         st.write("## Modèle XGBoost")
         st.write("Mean Squared Error (XGBoost):", xgb_mse)
         st.write("R^2 Score (XGBoost):", xgb_r2)
+    
 
 
 if page == pages[5]:
@@ -801,5 +803,7 @@ if page == pages[5]:
 
             # Générer la prédiction
             y_pred_mod2_logr = logr.predict(df_mod2)
+            st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
+            st.header(y_pred_mod2_logr[0])
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_logr[0])
