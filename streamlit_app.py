@@ -12,7 +12,20 @@ from sklearn.linear_model import LinearRegression
 import io
 import plotly.express as px
 import plotly.graph_objects as go
-@st.cache_data
+import joblib
+import pickle
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report           
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+import xgboost as xgb
+from sklearn.metrics import mean_squared_error, r2_score
+
 
 # Permettre à l'utilisateur de télécharger un fichier CSV
 uploaded_file = st.file_uploader("Choisissez un fichier CSV", type="csv")
@@ -40,6 +53,7 @@ if uploaded_file is not None:
         st.stop()
 else:
     st.write("Veuillez télécharger un fichier CSV pour continuer.")
+
 
 #Début du code pour tout le monde
 
@@ -213,65 +227,132 @@ if page == pages[2]:
     - **Utilisation de StandardScaler :** Permet de normaliser les caractéristiques de nos données en les recentrant autour de 0 avec une variance de 1.
     - **Importance :** Cette normalisation est cruciale lorsque les caractéristiques des données ont des échelles différentes. Cela garantit que notre modèle de machine learning fonctionne efficacement et de manière optimale.
     """)
-            
-#Gestion des Nan
-donnees2013 = donnees2013.rename(columns=lambda x: x.upper())
-donnees2013 = donnees2013.rename({'CHAMP V9': 'NORME UE'}, axis = 1)
-# Reconstitution de HC, NOX ou HC+NOX lorsque 2 des 3 colonnes sont connues
-select_col = ['HC (G/KM)', 'NOX (G/KM)', 'HC+NOX (G/KM)']
-select_donnees = donnees2013[donnees2013.isna().any(axis=1)][select_col]
-donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'HC+NOX (G/KM)'] = (select_donnees['HC (G/KM)'] + select_donnees['NOX (G/KM)'])
-donnees2013.loc[donnees2013['HC (G/KM)'].isna(), 'HC (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['NOX (G/KM)'])
-donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'NOX (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['HC (G/KM)'])
 
-#Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes CO2, CO TYPE I, HC, NOX, HC+NOX et PARTICULES
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO2 (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO TYPE I (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC (G/KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['NOX (G/KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC+NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC+NOX (G/KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'PARTICULES (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['PARTICULES (G/KM)'].fillna(0)
+# Prétraitement et encodage avec cache
+@st.cache_resource
+def preprocess_and_encode(donnees2013):        
+    #Gestion des Nan
+    donnees2013 = donnees2013.rename(columns=lambda x: x.upper())
+    donnees2013 = donnees2013.rename({'CHAMP V9': 'NORME UE'}, axis = 1)
+    # Reconstitution de HC, NOX ou HC+NOX lorsque 2 des 3 colonnes sont connues
+    select_col = ['HC (G/KM)', 'NOX (G/KM)', 'HC+NOX (G/KM)']
+    select_donnees = donnees2013[donnees2013.isna().any(axis=1)][select_col]
+    donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'HC+NOX (G/KM)'] = (select_donnees['HC (G/KM)'] + select_donnees['NOX (G/KM)'])
+    donnees2013.loc[donnees2013['HC (G/KM)'].isna(), 'HC (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['NOX (G/KM)'])
+    donnees2013.loc[donnees2013['HC+NOX (G/KM)'].isna(), 'NOX (G/KM)'] = (select_donnees['HC+NOX (G/KM)'] - select_donnees['HC (G/KM)'])
 
-#Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes liées aux consommations (urbaine, mixte, extra-urbaine)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION MIXTE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION MIXTE (L/100KM)'].fillna(0)
+    #Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes CO2, CO TYPE I, HC, NOX, HC+NOX et PARTICULES
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO2 (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CO TYPE I (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CO2 (G/KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC (G/KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['NOX (G/KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'HC+NOX (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['HC+NOX (G/KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'PARTICULES (G/KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['PARTICULES (G/KM)'].fillna(0)
 
-#Pour les véhicules Essence-électricité (hybride rechargeable), il y a 3 lignes :
-# On considère qu'en Urbain => 100% en électrique donc 0
-# On considère qu'en Extra-Urbain => 5,5L (d'après les sites et commentaires, c'est entre 5,2L et 6L pour les 3 véhicules)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
-donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(5.5)
+    #Pour les véhicules électriques, remplissage de NaN par 0 pour les colonnes liées aux consommations (urbaine, mixte, extra-urbaine)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EL', 'CONSOMMATION MIXTE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EL']['CONSOMMATION MIXTE (L/100KM)'].fillna(0)
 
-#Remplacer les NaN de 'CO TYPE I (G/KM)' par la médiane en fonction du carburant
-for carb in donnees2013.loc[donnees2013[['CO TYPE I (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']] = donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['CO TYPE I (G/KM)']].median())
+    #Pour les véhicules Essence-électricité (hybride rechargeable), il y a 3 lignes :
+    # On considère qu'en Urbain => 100% en électrique donc 0
+    # On considère qu'en Extra-Urbain => 5,5L (d'après les sites et commentaires, c'est entre 5,2L et 6L pour les 3 véhicules)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION URBAINE (L/100KM)'].fillna(0)
+    donnees2013.loc[donnees2013['CARBURANT'] == 'EE', 'CONSOMMATION EXTRA-URBAINE (L/100KM)'] = donnees2013[donnees2013['CARBURANT'] == 'EE']['CONSOMMATION EXTRA-URBAINE (L/100KM)'].fillna(5.5)
 
-#Remplacer les NaN de 'HC (G/KM)' par la médiane en fonction du carburant
-for carb in donnees2013.loc[donnees2013[['HC (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']] = donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC (G/KM)']].median())
+    #Remplacer les NaN de 'CO TYPE I (G/KM)' par la médiane en fonction du carburant
+    for carb in donnees2013.loc[donnees2013[['CO TYPE I (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+        donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']] = donnees2013.loc[(donnees2013['CO TYPE I (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['CO TYPE I (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['CO TYPE I (G/KM)']].median())
 
-#Remplacer les NaN de 'NOX (G/KM)' par la médiane en fonction du carburant
-for carb in donnees2013.loc[donnees2013[['NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']] = donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & ( donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['NOX (G/KM)']].median())
+    #Remplacer les NaN de 'HC (G/KM)' par la médiane en fonction du carburant
+    for carb in donnees2013.loc[donnees2013[['HC (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+        donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']] = donnees2013.loc[(donnees2013['HC (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC (G/KM)']].median())
 
-#Remplacer les NaN de 'HC+NOX (G/KM)' par la médiane en fonction du carburant
-for carb in donnees2013.loc[donnees2013[['HC+NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']] = donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC+NOX (G/KM)']].median())
+    #Remplacer les NaN de 'NOX (G/KM)' par la médiane en fonction du carburant
+    for carb in donnees2013.loc[donnees2013[['NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+        donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']] = donnees2013.loc[(donnees2013['NOX (G/KM)'].isna()) & ( donnees2013['CARBURANT'] == carb), ['NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['NOX (G/KM)']].median())
 
-#Remplacer les NaN de 'PARTICULES (G/KM)' par la médiane en fonction du carburant
-for carb in donnees2013.loc[donnees2013[['PARTICULES (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
-    donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['PARTICULES (G/KM)']].median())
+    #Remplacer les NaN de 'HC+NOX (G/KM)' par la médiane en fonction du carburant
+    for carb in donnees2013.loc[donnees2013[['HC+NOX (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+        donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']] = donnees2013.loc[(donnees2013['HC+NOX (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['HC+NOX (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['HC+NOX (G/KM)']].median())
 
-#Remplacer les NaN restant sur la colonne 'PARTICULES (G/KM)' par la médiane sachant que sur 43% des reponses sont 0 et 40% sont 0,001
-donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']].fillna(donnees2013['PARTICULES (G/KM)'].median())
+    #Remplacer les NaN de 'PARTICULES (G/KM)' par la médiane en fonction du carburant
+    for carb in donnees2013.loc[donnees2013[['PARTICULES (G/KM)']].isna().all(axis=1)]['CARBURANT'].unique():
+        donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()) & (donnees2013['CARBURANT'] == carb), ['PARTICULES (G/KM)']].fillna(donnees2013[donnees2013['CARBURANT'] == carb][['PARTICULES (G/KM)']].median())
 
+    #Remplacer les NaN restant sur la colonne 'PARTICULES (G/KM)' par la médiane sachant que sur 43% des reponses sont 0 et 40% sont 0,001
+    donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']] = donnees2013.loc[(donnees2013['PARTICULES (G/KM)'].isna()), ['PARTICULES (G/KM)']].fillna(donnees2013['PARTICULES (G/KM)'].median())
+       
+    #Entrainement du modèle en dehors de la page pour avoir les mêmes données en la modélisation 1 et 2
+    #Nettoyage du nombre de colonne
+    donnees2013_ml = donnees2013.drop([
+        'MARQUE',
+        'MODÈLE DOSSIER',
+        'MODÈLE UTAC',
+        'DÉSIGNATION COMMERCIALE',
+        'CNIT',
+        'TYPE VARIANTE VERSION (TVV)',
+        'BOÎTE DE VITESSE',
+        'CO TYPE I (G/KM)',
+        'HC (G/KM)',
+        'NOX (G/KM)',
+        'HC+NOX (G/KM)',
+        'PARTICULES (G/KM)',
+        'NORME UE',
+        'DATE DE MISE À JOUR'
+    ], axis=1)
+
+    #Isoler la valeur cible
+    y = donnees2013_ml['CO2 (G/KM)']
+    X = donnees2013_ml.drop(['CO2 (G/KM)'], axis = 1)
+
+    #Séparation du jeu de donnée pour l'entrainement et le test. On garde 20% des données pour les tests.
+    from sklearn.model_selection import train_test_split
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+    from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+
+    #utilisation du OneHotEncoder pour la varbiable 'Hybride' car c'est une variable binaire
+    ohe = OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore')
+    cat_hybride_train = ohe.fit_transform(X_train[['HYBRIDE']])
+    cat_hybride_test = ohe.transform(X_test[['HYBRIDE']])
+
+    # Encodage de 'CARBURANT', 'CARROSSERIE', 'GAMME' avec OrdinalEncoder
+    oe = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+    cat_oe = ['CARBURANT', 'CARROSSERIE', 'GAMME']
+    cat_oe_train = oe.fit_transform(X_train[cat_oe])
+    cat_oe_test = oe.transform(X_test[cat_oe])
+
+
+    # Concaténer les colonnes encodées avec les autres colonnes
+    X_train = pd.concat([
+        pd.DataFrame(cat_hybride_train, index=X_train.index, columns=['HYBRIDE']),
+        pd.DataFrame(cat_oe_train, index=X_train.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+        X_train.drop(['HYBRIDE', 'CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+
+
+    X_test = pd.concat([
+        pd.DataFrame(cat_hybride_test, index=X_test.index, columns=['HYBRIDE']),
+        pd.DataFrame(cat_oe_test, index=X_test.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
+        X_test.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+
+
+    #Le StandardScaler nous permet d'appliquer la transformation Z-Score à nos données.
+    from sklearn.preprocessing import StandardScaler
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
+
+    return X_train, X_test, y_train, y_test, ohe, oe, sc, cat_oe, donnees2013, donnees2013_ml
+
+X_train, X_test, y_train, y_test, ohe, oe, sc, cat_oe, donnees2013, donnees2013_ml = preprocess_and_encode(donnees2013)
 
 if page == pages[3]:
     st.write("## Observons les données grâce à la Data Visualisation")
     st.write("### DataViz n°1")
     fig = px.histogram(donnees2013, x='CO2 (G/KM)', title='Distribution des émissions de CO2')
-    fig.update_layout(xaxis_title='CO2 (G/KM)',yaxis_title='Count',bargap=0.2, template='plotly_white')
+    fig.update_layout(xaxis_title='CO2 (G/KM)', yaxis_title='Count', bargap=0.2, template='plotly_white')
     st.plotly_chart(fig)
     
     
@@ -360,206 +441,125 @@ if page == pages[3]:
     fig = px.pie(carburant_counts_df, values='COUNT', names='CARBURANT', title='Répartition des véhicules par type de carburant')
     st.plotly_chart(fig)
 
-    
-#Entrainement du modèle en dehors de la page pour avoir les mêmes données en la modélisation 1 et 2
-#Nettoyage du nombre de colonne
-donnees2013_ml = donnees2013.drop([
-    'MARQUE',
-    'MODÈLE DOSSIER',
-    'MODÈLE UTAC',
-    'DÉSIGNATION COMMERCIALE',
-    'CNIT',
-    'TYPE VARIANTE VERSION (TVV)',
-    'BOÎTE DE VITESSE',
-    'CO TYPE I (G/KM)',
-    'HC (G/KM)',
-    'NOX (G/KM)',
-    'HC+NOX (G/KM)',
-    'PARTICULES (G/KM)',
-    'NORME UE',
-    'DATE DE MISE À JOUR'
-], axis=1)
+ 
 
-#Isoler la valeur cible
-y = donnees2013_ml['CO2 (G/KM)']
-X = donnees2013_ml.drop(['CO2 (G/KM)'], axis = 1)
+# Entraînement et cache des modèles
+@st.cache_resource
+def train_decision_tree_classifier(X_train, y_train):
+    dt_clf = DecisionTreeClassifier()
+    dt_clf.fit(X_train, y_train)
+    return dt_clf
 
-#Séparation du jeu de donnée pour l'entrainement et le test. On garde 20% des données pour les tests.
-from sklearn.model_selection import train_test_split
+dt_clf = train_decision_tree_classifier(X_train, y_train)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
+@st.cache_resource
+def train_decision_tree_regressor(X_train, y_train):
+    dt_reg = DecisionTreeRegressor()
+    dt_reg.fit(X_train, y_train)
+    return dt_reg
 
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+dt_reg = train_decision_tree_regressor(X_train, y_train)
 
-#utilisation du OneHotEncoder pour la varbiable 'Hybride' car c'est une variable binaire
-ohe = OneHotEncoder(drop='first', sparse_output=False)
-cat_hybride_train = ohe.fit_transform(X_train[['HYBRIDE']])
-cat_hybride_test = ohe.transform(X_test[['HYBRIDE']])
+@st.cache_resource
+def train_linear_regression(X_train, y_train):
+    lr = LinearRegression()
+    lr.fit(X_train, y_train)
+    return lr
 
-# Encodage de 'CARBURANT', 'CARROSSERIE', 'GAMME' avec OrdinalEncoder
-oe = OrdinalEncoder()
-cat_oe = ['CARBURANT', 'CARROSSERIE', 'GAMME']
-cat_oe_train = oe.fit_transform(X_train[cat_oe])
-cat_oe_test = oe.transform(X_test[cat_oe])
+lr = train_linear_regression(X_train, y_train)
 
+@st.cache_resource
+def train_logistic_regression(X_train, y_train):
+    logr = LogisticRegression()
+    logr.fit(X_train, y_train)
+    return logr
 
-# Concaténer les colonnes encodées avec les autres colonnes
-X_train = pd.concat([
-    pd.DataFrame(cat_hybride_train, index=X_train.index, columns=['HYBRIDE']),
-    pd.DataFrame(cat_oe_train, index=X_train.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
-    X_train.drop(['HYBRIDE', 'CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+logr = train_logistic_regression(X_train, y_train)
 
+# Sauvegarde du modèle avec Joblib
+joblib.dump(dt_clf, 'dt_clf_model.pkl')
+joblib.dump(dt_reg, 'dt_reg_model.pkl')
+joblib.dump(lr, 'lr_model.pkl')
+joblib.dump(logr, 'logr_model.pkl')
 
-X_test = pd.concat([
-    pd.DataFrame(cat_hybride_test, index=X_test.index, columns=['HYBRIDE']),
-    pd.DataFrame(cat_oe_test, index=X_test.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
-    X_test.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
+# Chargement du modèle
+dt_clf = joblib.load('dt_clf_model.pkl')
+dt_reg = joblib.load('dt_reg_model.pkl')
+lr = joblib.load('lr_model.pkl')
+logr = joblib.load('logr_model.pkl')
 
+# Calcul des scores pour chaque modèle après l'entraînement
 
-#Le StandardScaler nous permet d'appliquer la transformation Z-Score à nos données.
-from sklearn.preprocessing import StandardScaler
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-    
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import classification_report           
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
-import xgboost as xgb
-from sklearn.metrics import mean_squared_error, r2_score
+# Pour l'arbre de décision
+train_score_clf = dt_clf.score(X_train, y_train)
+test_score_clf = dt_clf.score(X_test, y_test)
 
+# Pour l'arbre de régression
+train_score_reg = dt_reg.score(X_train, y_train)
+test_score_reg = dt_reg.score(X_test, y_test)
 
+# Pour la régression linéaire
+train_score_lr = lr.score(X_train, y_train)
+test_score_lr = lr.score(X_test, y_test)
 
-#Entrainer le modèle pour DecisionTreeClassifier
-dt_clf = DecisionTreeClassifier()
-dt_clf.fit(X_train, y_train)
+# Pour la régression logistique
+train_score_logr = logr.score(X_train, y_train)
+test_score_logr = logr.score(X_test, y_test)
 
-#Générer les tests DecisionTreeClassifier
-y_pred_test_clf = dt_clf.predict(X_test)
+# Calcul des métriques pour les modèles
+@st.cache_resource
+def calculate_metrics(_model, X_test, y_test):
+    y_pred = _model.predict(X_test)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = np.sqrt(mse)
+    return mae, mse, rmse, y_pred
 
-# Calcul des scores DecisionTreeClassifier
-train_score_clf = round(dt_clf.score(X_train, y_train), 4)
-test_score_clf = round(dt_clf.score(X_test, y_test), 4)
-
-# Calcul des métriques DecisionTreeClassifier
-mae_clf = mean_absolute_error(y_test, y_pred_test_clf)
-mse_clf = mean_squared_error(y_test, y_pred_test_clf)
-rmse_clf = np.sqrt(mse_clf)
-
-
-
-
-# Entraîner le modèle DecisionTreeRegressor
-dt_reg = DecisionTreeRegressor()
-dt_reg.fit(X_train, y_train)
-
-# Générer les tests DecisionTreeRegressor
-y_pred_test_reg = dt_reg.predict(X_test)
-
-# Calcul des scores DecisionTreeRegressor
-train_score_reg = round(dt_reg.score(X_train, y_train), 4)
-test_score_reg = round(dt_reg.score(X_test, y_test), 4)
-
-# Calcul des métriques DecisionTreeRegressor
-mae_reg = mean_absolute_error(y_test, y_pred_test_reg)
-mse_reg = mean_squared_error(y_test, y_pred_test_reg)
-rmse_reg = np.sqrt(mse_reg)
-
-
-
-# Entraîner le modèle LinearRegression
-lr = LinearRegression()
-lr.fit(X_train, y_train)
-
-# Générer les tests LinearRegression
-y_pred_test_lr = lr.predict(X_test)
-
-# Calcul des scores LinearRegression
-train_score_lr = round(lr.score(X_train, y_train), 4)
-test_score_lr = round(lr.score(X_test, y_test), 4)
-
-# Calcul des métriques LinearRegression
-mae_lr = mean_absolute_error(y_test, y_pred_test_lr)
-mse_lr = mean_squared_error(y_test, y_pred_test_lr)
-rmse_lr = np.sqrt(mse_lr)
-
-
-
-
-# Entraîner le modèle LogisticRegression
-logr = LogisticRegression()
-logr.fit(X_train, y_train)
-
-# Générer les tests LogisticRegression
-y_pred_test_logr = logr.predict(X_test)
-
-# Calcul des scores LogisticRegression
-train_score_logr = round(logr.score(X_train, y_train), 4)
-test_score_logr = round(logr.score(X_test, y_test), 4)
-
-# Calcul des métriques LogisticRegression
-mae_logr = mean_absolute_error(y_test, y_pred_test_logr)
-mse_logr = mean_squared_error(y_test, y_pred_test_logr)
-rmse_logr = np.sqrt(mse_logr)
-
-
-
-
+mae_clf, mse_clf, rmse_clf, y_pred_test_clf = calculate_metrics(dt_clf, X_test, y_test)
+mae_reg, mse_reg, rmse_reg, y_pred_test_reg = calculate_metrics(dt_reg, X_test, y_test)
+mae_lr, mse_lr, rmse_lr, y_pred_test_lr = calculate_metrics(lr, X_test, y_test)
+mae_logr, mse_logr, rmse_logr, y_pred_test_logr = calculate_metrics(logr, X_test, y_test)
+ 
 #97% à 98% des données ont un carburant 'ES' ou 'GO'. On prépare donc un test pour observer les résultats sur les données en déhors de ces 2 types de carburant.
 #Nous allons réperer les 2 valeurs ayant un nombre d'occurences élevé pour repérer les 'ES' et 'GO' pour ensuite les enlever dans notre comparaison de y_test et y_pred_test
+# Calcul des métriques pour les modèles
+@st.cache_resource
+def calculate_metrics_horsGOES(_model, X_test, y_test):
+    # Obtenir les valeurs uniques et leurs occurrences pour la deuxième colonne de X_test
+    valeurs_uniques, nombre_occurrences = np.unique(X_test[:, 1], return_counts=True)
 
-# Obtenir les valeurs uniques et leurs occurrences pour la deuxième colonne de X_test
-valeurs_uniques, nombre_occurrences = np.unique(X_test[:, 1], return_counts=True)
+    # Trouver les deux valeurs avec les occurrences les plus élevées
+    indices_top2 = np.argsort(nombre_occurrences)[-2:]
+    valeurs_top2 = valeurs_uniques[indices_top2]
 
-for valeur, occurrence in zip(valeurs_uniques, nombre_occurrences):
-    print(f'Valeur: {valeur}, Nombre d\'occurrences: {occurrence}')
+    # Filtrer X_test pour exclure ces deux valeurs
+    ind_x_test_horsGOES = np.where((X_test[:, 1] != valeurs_top2[0]) & (X_test[:, 1] != valeurs_top2[1]))[0]
 
-# Trouver les deux valeurs avec les occurrences les plus élevées
-indices_top2 = np.argsort(nombre_occurrences)[-2:]
-valeurs_top2 = valeurs_uniques[indices_top2]
+    # Extraire les lignes spécifiques de X_test
+    X_test_horsGOES = X_test[ind_x_test_horsGOES]
 
-# Filtrer X_test pour exclure ces deux valeurs
-ind_x_test_horsGOES  = np.where((X_test[:, 1] != valeurs_top2[0]) & (X_test[:, 1] != valeurs_top2[1]))[0]
+    # Convertir y_test en numpy array pour éviter les problèmes d'index
+    y_test_array = y_test.to_numpy()
 
+    # Extraire les valeurs correspondantes de y_test
+    y_test_horsGOES = y_test_array[ind_x_test_horsGOES]
 
-# Extraire les lignes spécifiques de X_test
-X_test_horsGOES = X_test[ind_x_test_horsGOES]
+    # Prédire les valeurs pour X_test_horsGOES avec le modèle donné
+    y_pred_horsGOES = _model.predict(X_test_horsGOES)
 
-# Convertir y_test et y_pred_test en numpy arrays pour éviter le problème d'index
-y_test_array = y_test.to_numpy()
+    # Calcul des métriques
+    mae_horsGOES = mean_absolute_error(y_test_horsGOES, y_pred_horsGOES)
+    mse_horsGOES = mean_squared_error(y_test_horsGOES, y_pred_horsGOES)
+    rmse_horsGOES = np.sqrt(mse_horsGOES)
 
-# Extraire les valeurs correspondantes de y_test et y_pred_test
-y_test_horsGOES = y_test_array[ind_x_test_horsGOES]
-y_pred_test_clf_horsGOES = y_pred_test_clf[ind_x_test_horsGOES]
-y_pred_test_reg_horsGOES = y_pred_test_reg[ind_x_test_horsGOES]
-y_pred_test_lr_horsGOES = y_pred_test_lr[ind_x_test_horsGOES]
-y_pred_test_logr_horsGOES = y_pred_test_logr[ind_x_test_horsGOES]
+    return mae_horsGOES, mse_horsGOES, rmse_horsGOES
 
-# Calcul des métriques DecisionTreeClassifier
-mae_clf_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_clf_horsGOES)
-mse_clf_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_clf_horsGOES)
-rmse_clf_horsGOES = np.sqrt(mse_clf_horsGOES)
+# Calcul des métriques hors 'ES' et 'GO' pour chaque modèle
+mae_clf_horsGOES, mse_clf_horsGOES, rmse_clf_horsGOES = calculate_metrics_horsGOES(dt_clf, X_test, y_test)
+mae_reg_horsGOES, mse_reg_horsGOES, rmse_reg_horsGOES = calculate_metrics_horsGOES(dt_reg, X_test, y_test)
+mae_lr_horsGOES, mse_lr_horsGOES, rmse_lr_horsGOES = calculate_metrics_horsGOES(lr, X_test, y_test)
+mae_logr_horsGOES, mse_logr_horsGOES, rmse_logr_horsGOES = calculate_metrics_horsGOES(logr, X_test, y_test)
 
-# Calcul des métriques DecisionTreeRegressor
-mae_reg_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_reg_horsGOES)
-mse_reg_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_reg_horsGOES)
-rmse_reg_horsGOES = np.sqrt(mse_reg_horsGOES)
-
-# Calcul des métriques LinearRegression
-mae_lr_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_lr_horsGOES)
-mse_lr_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_lr_horsGOES)
-rmse_lr_horsGOES = np.sqrt(mse_lr_horsGOES)
-
-# Calcul des métriques LogisticRegression
-mae_logr_horsGOES = mean_absolute_error(y_test_horsGOES , y_pred_test_logr_horsGOES)
-mse_logr_horsGOES = mean_squared_error(y_test_horsGOES , y_pred_test_logr_horsGOES)
-rmse_logr_horsGOES = np.sqrt(mse_logr_horsGOES)
 
 if page == pages[4]:
     st.header("Modélisation 1 et analyse de performance")
