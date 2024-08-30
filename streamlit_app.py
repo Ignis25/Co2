@@ -703,7 +703,7 @@ if page == pages[5]:
         carburant = st.selectbox('CARBURANT', ['GO', 'ES']) #, 'EH', 'GP/ES', 'ES/GP', 'ES/GN', 'GN/ES', 'FE', 'GH', 'GN', 'EL', 'EE'])
 
         st.write("Veuillez indiquer si le véhicule est hybride :")
-        hybride = st.selectbox('HYBRIDE', ['oui', 'non'])
+        hybride = st.selectbox('HYBRIDE', ['non']) #, 'non'])
 
         st.write("Veuillez entrer la puissance administrative :")
         puissance_administrative = st.slider('PUISSANCE ADMINISTRATIVE', min_value=1, max_value=10, value=1)
@@ -727,10 +727,10 @@ if page == pages[5]:
         masse_vide_max = st.slider('MASSE VIDE EURO MAX (KG)', min_value=0, max_value=3500, value=0)
 
         st.write("Veuillez renseigner le type de carrosserie :")
-        carrosserie = st.selectbox('CARROSSERIE', ['MINIBUS', 'BERLINE', 'COUPE', 'COMBISPACE', 'BREAK', 'TS TERRAINS/CHEMINS', 'MONOSPACE COMPACT', 'MINISPACE', 'CABRIOLET', 'MONOSPACE'])
+        carrosserie = st.selectbox('CARROSSERIE', [ 'BERLINE','MINIBUS', 'COUPE', 'COMBISPACE', 'BREAK', 'TS TERRAINS/CHEMINS', 'MONOSPACE COMPACT', 'MINISPACE', 'CABRIOLET', 'MONOSPACE'])
 
         st.write("Veuillez renseigner la gamme du véhicule :")
-        gamme = st.selectbox('GAMME', ['MOY-SUPER', 'LUXE', 'MOY-INFER', 'INFERIEURE', 'SUPERIEURE', 'ECONOMIQUE'])
+        gamme = st.selectbox('GAMME', ['ECONOMIQUE','MOY-SUPER', 'LUXE', 'MOY-INFER', 'INFERIEURE', 'SUPERIEURE'])
 
         # Enregistrement dans un tableau
         donnees_mod2 = {
@@ -775,6 +775,9 @@ if page == pages[5]:
             y_pred_mod2_clf = dt_clf.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_clf[0])
+            if y_pred_mod2_clf[0] < 100 : 
+                st.write("Votre véhicule sera catégorisé en A") 
+            st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
 
         if algo_selected == "Arbre de régression":
             st.write("MAE =", round(mae_reg, 3))
@@ -786,6 +789,8 @@ if page == pages[5]:
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_reg[0])
 
+            st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
+
         if algo_selected == "Régression linéaire":
             st.write("MAE =", round(mae_lr, 3))
             st.write("MSE =", round(mse_lr, 3))
@@ -796,6 +801,8 @@ if page == pages[5]:
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_lr[0])
 
+            st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
+
         if algo_selected == "Régression logistique":
             st.write("MAE =", round(mae_logr, 3))
             st.write("MSE =", round(mse_logr, 3))
@@ -805,3 +812,5 @@ if page == pages[5]:
             y_pred_mod2_logr = logr.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_logr[0])
+
+            st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
