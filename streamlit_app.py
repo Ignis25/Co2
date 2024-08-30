@@ -700,7 +700,7 @@ if page == pages[5]:
         
         #Choix des variables pour le véhicule "test" de notre modélisation 2
         st.write("Veuillez renseigner le type de carburant :")
-        carburant = st.selectbox('CARBURANT', ['GO', 'ES', 'EH', 'GP/ES', 'ES/GP', 'ES/GN', 'GN/ES', 'FE', 'GH', 'GN', 'EL', 'EE'])
+        carburant = st.selectbox('CARBURANT', ['GO', 'ES']) #, 'EH', 'GP/ES', 'ES/GP', 'ES/GN', 'GN/ES', 'FE', 'GH', 'GN', 'EL', 'EE'])
 
         st.write("Veuillez indiquer si le véhicule est hybride :")
         hybride = st.selectbox('HYBRIDE', ['oui', 'non'])
@@ -803,7 +803,5 @@ if page == pages[5]:
 
             # Générer la prédiction
             y_pred_mod2_logr = logr.predict(df_mod2)
-            st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
-            st.header(y_pred_mod2_logr[0])
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_logr[0])
