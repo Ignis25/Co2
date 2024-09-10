@@ -7,3 +7,4 @@ chardet
 matplotlib
 scikit-learn
 plotly
+xgboost
