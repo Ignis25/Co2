@@ -621,7 +621,7 @@ if page == pages[4]:
     st.write("## Régression logistique")
     st.write(f'Score sur ensemble train: {train_score_logr}')
     st.write(f'Score sur ensemble test: {test_score_logr}')
-    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
+    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test.")
     st.write("MAE =", round(mae_logr, 3))
     st.write("MSE =", round(mse_logr, 3))
     st.write("RMSE =", round(rmse_logr, 3))
