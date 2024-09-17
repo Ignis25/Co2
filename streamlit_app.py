@@ -762,6 +762,25 @@ if page == pages[5]:
             pd.DataFrame(cat_oe_df_mod2, index=df_mod2.index, columns=['CARBURANT', 'CARROSSERIE', 'GAMME']),
             df_mod2.drop(['HYBRIDE','CARBURANT', 'CARROSSERIE', 'GAMME'], axis=1)], axis=1)
 
+        #Application du Standard Scaler
+        df_mod2 = sc.transform(df_mod2)
+
+        def get_co2_category(co2_value):
+            if co2_value < 100:
+                return "A : moins de 100 g/km (très peu polluant)"
+            elif 100 <= co2_value <= 120:
+                return "B : entre 101 et 120 g/km (peu polluant)"
+            elif 121 <= co2_value <= 140:
+                return "C : entre 121 et 140 g/km (modérément polluant)"
+            elif 141 <= co2_value <= 160:
+                return "D : entre 141 et 160 g/km (polluant)"
+            elif 161 <= co2_value <= 200:
+                return "E : entre 161 et 200 g/km (assez polluant)"
+            elif 201 <= co2_value <= 250:
+                return "F : entre 201 et 250 g/km (très polluant)"
+            else:
+                return "G : plus de 250 g/km (extrêmement polluant)"
+            
         algo_options = ["Arbre de décision", "Arbre de régression", "Régression linéaire","Régression logistique"]
         algo_selected = st.selectbox("Veuillez choisir un algorythme:",
                               options = algo_options)
@@ -775,8 +794,11 @@ if page == pages[5]:
             y_pred_mod2_clf = dt_clf.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_clf[0])
-            if y_pred_mod2_clf[0] < 100 : 
-                st.write("Votre véhicule sera catégorisé en A") 
+            
+            # Récupérer la catégorie basée sur la prédiction
+            category = get_co2_category(y_pred_mod2_clf[0])
+            st.subheader(f"Le véhicule se classe dans la catégorie : {category}")
+
             st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
 
         if algo_selected == "Arbre de régression":
@@ -788,6 +810,10 @@ if page == pages[5]:
             y_pred_mod2_reg = dt_reg.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_reg[0])
+            
+            # Récupérer la catégorie basée sur la prédiction
+            category = get_co2_category(y_pred_mod2_reg[0])
+            st.subheader(f"Le véhicule se classe dans la catégorie : {category}")
 
             st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
 
@@ -801,6 +827,10 @@ if page == pages[5]:
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_lr[0])
 
+            # Récupérer la catégorie basée sur la prédiction
+            category = get_co2_category(y_pred_mod2_lr[0])
+            st.subheader(f"Le véhicule se classe dans la catégorie : {category}")
+
             st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
 
         if algo_selected == "Régression logistique":
@@ -812,5 +842,10 @@ if page == pages[5]:
             y_pred_mod2_logr = logr.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
             st.header(y_pred_mod2_logr[0])
+            # Définition des catégories basées sur les émissions de CO2
+
+            # Récupérer la catégorie basée sur la prédiction
+            category = get_co2_category(y_pred_mod2_logr[0])
+            st.subheader(f"Le véhicule se classe dans la catégorie : {category}")
 
             st.image("http://images.vedura.fr/developpement-durable/normes-referentiels/etiquette-energie-voiture+3002503.jpg")
