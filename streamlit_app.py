@@ -107,12 +107,28 @@ if page == pages[0]:
    
 if page == pages[1]:
     st.title("Contexte du Projet")
-    st.write("**Les projets : Identifier les véhicules qui émettent le plus de CO2 est important pour identifier les caractéristiques techniques qui jouent un rôle dans la pollution. Prédire à l’avance cette pollution permet de prévenir dans le cas de l’apparition de nouveaux types de véhicules (nouvelles séries de voitures par exemple)**")
-    st.image("https://gcft.fr/wp-content/uploads/2017/02/ademe-logo.jpg", caption = "Logo de l'ADEME", width = 200)
-    st.write("L'Agence de l'Environnement et de la Maîtrise de l'Energie (ADEME) est une institution clé en France, jouant un rôle majeur dans la promotion de pratiques respectueuses de l'environnement et dans la gestion des ressources énergétiques. Chaque année depuis 2001, l'ADEME collecte des données sur les véhicules commercialisés en France, en partenariat avec l'Union Technique de l'Automobile du motocycle et du Cycle (UTAC), organisme responsable de l'homologation des véhicules.")
-    st.write("Le jeu de données : https://www.data.gouv.fr/fr/datasets/emissions-de-co2-et-de-polluants-des-vehicules-commercialises-en-france/#_")
-    st.write("Ce jeu de données de 2013 offre une mine d'informations précieuses, notamment les caractéristiques techniques des véhicules, les consommations de carburant, les émissions de dioxyde de carbone (CO2) et les émissions de polluants de l'air, conforme à la norme Euro en vigueur. Ces données sont essentielles pour identifier les véhicules les plus émetteurs de CO2 et les plus polluants, ce qui permet de comprendre les caractéristiques techniques influant sur la pollution.")
-    st.write("Grâce à ce jeu de données, il est possible d'entreprendre diverses analyses, telles que l'identification des véhicules les plus émetteurs de CO2, la prédiction de la pollution pour de nouveaux types de véhicules, ou encore l'évaluation de l'impact des caractéristiques techniques sur les émissions polluantes. Ces analyses peuvent contribuer à orienter les politiques environnementales et à promouvoir des choix de consommation plus durables dans le secteur automobile.")
+    st.write("**Projets** :")
+    st.write("- Identifier les véhicules émettant le plus de CO2.")
+    st.write("- Comprendre les caractéristiques techniques influençant la pollution.")
+    st.write("- Prédire la pollution pour les nouveaux types de véhicules.")
+        
+    st.image("https://gcft.fr/wp-content/uploads/2017/02/ademe-logo.jpg", caption="Logo de l'ADEME", width=200)
+
+    st.write("**ADEME** :")
+    st.write("- Agence de l'Environnement et de la Maîtrise de l'Énergie.")
+    st.write("- Collecte des données sur les véhicules depuis 2001.")
+    st.write("- En partenariat avec l'UTAC (homologation des véhicules).")
+
+    st.write("**Jeu de données** :")
+    st.write("- Source : [Données ADEME](https://www.data.gouv.fr/fr/datasets/emissions-de-co2-et-de-polluants-des-vehicules-commercialises-en-france/#_)")
+    st.write("- Données de 2013 : caractéristiques techniques, consommations de carburant, émissions de CO2, normes Euro.")
+    st.write("- Utiles pour analyser les émissions et orienter les politiques environnementales.")
+
+    st.write("**Analyses possibles** :")
+    st.write("- Identification des véhicules les plus polluants.")
+    st.write("- Prédiction des émissions pour de nouveaux véhicules.")
+    st.write("- Impact des caractéristiques techniques sur la pollution.")
+
     st.header("Notre équipe :")
     st.write("### Projet réalisé par François Vergne, Drazen Saric & Arnaud Colombel")
     st.warning("Une description de nous se trouve sur la gauche de la page.")
@@ -582,12 +598,12 @@ if page == pages[4]:
     st.write("## Arbre de décision")
     st.write(f'Score sur ensemble train: {train_score_clf}')
     st.write(f'Score sur ensemble test: {test_score_clf}')
-    st.write("La méthode score est une métrique qui va comparer les résultats de prédictions de votre jeu de données X par rapport à y. Nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. Nous ne sommes donc pas dans un cas d'overfitting. De plus, le score sur le jeu de test est proche de 1 (0,96), nous pouvons donc déduire que notre modèle est performant.")
-    st.write("MAE =", round(mae_clf, 3))
+    st.write(" ")
+    st.write("MAE =", round(mae_clf, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_clf, 3))
     st.write("RMSE =", round(rmse_clf, 3))
-    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
-    st.write("MAE =", round(mae_clf_horsGOES, 3))
+    st.write("En excluant l'essence et le gasoil :")
+    st.write("MAE =", round(mae_clf_horsGOES, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_clf_horsGOES, 3))
     st.write("RMSE =", round(rmse_clf_horsGOES, 3))
 
@@ -595,12 +611,12 @@ if page == pages[4]:
     st.write("## Arbre de régression")
     st.write(f'Score sur ensemble train: {train_score_reg}')
     st.write(f'Score sur ensemble test: {test_score_reg}')
-    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
-    st.write("MAE =", round(mae_reg, 3))
+    st.write(" ")
+    st.write("MAE =", round(mae_reg, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_reg, 3))
     st.write("RMSE =", round(rmse_reg, 3))
-    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
-    st.write("MAE =", round(mae_reg_horsGOES, 3))
+    st.write("En excluant l'essence et le gasoil :")
+    st.write("MAE =", round(mae_reg_horsGOES, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_reg_horsGOES, 3))
     st.write("RMSE =", round(rmse_reg_horsGOES, 3))
 
@@ -608,12 +624,12 @@ if page == pages[4]:
     st.write("## Régression linéaire")
     st.write(f'Score sur ensemble train: {train_score_lr}')
     st.write(f'Score sur ensemble test: {test_score_lr}')
-    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test. La performance est aussi très bonne.")
-    st.write("MAE =", round(mae_lr, 3))
+    st.write(" ")
+    st.write("MAE =", round(mae_lr, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_lr, 3))
     st.write("RMSE =", round(rmse_lr, 3))
-    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
-    st.write("MAE =", round(mae_lr_horsGOES, 3))
+    st.write("En excluant l'essence et le gasoil :")
+    st.write("MAE =", round(mae_lr_horsGOES, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_lr_horsGOES, 3))
     st.write("RMSE =", round(rmse_lr_horsGOES, 3))
 
@@ -621,12 +637,12 @@ if page == pages[4]:
     st.write("## Régression logistique")
     st.write(f'Score sur ensemble train: {train_score_logr}')
     st.write(f'Score sur ensemble test: {test_score_logr}')
-    st.write("Encore, nous pouvons remarquer un faible écart de score entre le jeu d'entrainement et le jeu de test.")
-    st.write("MAE =", round(mae_logr, 3))
+    st.write(" ")
+    st.write("MAE =", round(mae_logr, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_logr, 3))
     st.write("RMSE =", round(rmse_logr, 3))
-    st.write("Observons maintenant la performance du modèle sur les véhicules n'étant pas au carburant essence ou gasoil")
-    st.write("MAE =", round(mae_clf_horsGOES, 3))
+    st.write("En excluant l'essence et le gasoil :")
+    st.write("MAE =", round(mae_clf_horsGOES, 3),"pour une distribution de 0 à 570g/km")
     st.write("MSE =", round(mse_clf_horsGOES, 3))
     st.write("RMSE =", round(rmse_clf_horsGOES, 3))
 
@@ -693,6 +709,21 @@ if page == pages[4]:
         st.write("Mean Squared Error (XGBoost):", xgb_mse)
         st.write("R^2 Score (XGBoost):", xgb_r2)
     
+    st.warning("Afin d'éviter un long chargement des modèles, voici des résultats que nous avons eu (ils sont figés et peuvent donc présenter des écarts avec les résultats que vous obtiendrez en lançant vous-même les modèles.)")
+    st.write(" ")    
+    st.write("### Grid Search CV avec Random Forest")
+    st.write("Initial Mean Squared Error: 0,58478")
+    st.write("Initial R^2 Score: 0,99963")
+    st.write("Meilleurs paramètres :")
+    st.write("    max_depth: 20")
+    st.write("    min_samples_split: 5")
+    st.write("    n_estimators:10")
+    st.write("Optimized Mean Squared Error: 0,49410")
+    st.write("Optimized R^2 Score: 0,99968")
+    st.write(" ")
+    st.write("### Modèle XGBoost")
+    st.write("Mean Squared Error: 0,36307")
+    st.write("R^2 Score: 0,99978"  ) 
 
 
 if page == pages[5]:
@@ -793,7 +824,7 @@ if page == pages[5]:
             # Générer la prédiction
             y_pred_mod2_clf = dt_clf.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
-            st.header(y_pred_mod2_clf[0])
+            st.header(round(y_pred_mod2_clf[0],2))
             
             # Récupérer la catégorie basée sur la prédiction
             category = get_co2_category(y_pred_mod2_clf[0])
@@ -809,7 +840,7 @@ if page == pages[5]:
             # Générer la prédiction
             y_pred_mod2_reg = dt_reg.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
-            st.header(y_pred_mod2_reg[0])
+            st.header(round(y_pred_mod2_reg[0],2))
             
             # Récupérer la catégorie basée sur la prédiction
             category = get_co2_category(y_pred_mod2_reg[0])
@@ -825,7 +856,7 @@ if page == pages[5]:
             # Générer la prédiction
             y_pred_mod2_lr = lr.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
-            st.header(y_pred_mod2_lr[0])
+            st.header(round(y_pred_mod2_lr[0],2))
 
             # Récupérer la catégorie basée sur la prédiction
             category = get_co2_category(y_pred_mod2_lr[0])
@@ -841,7 +872,7 @@ if page == pages[5]:
             # Générer la prédiction
             y_pred_mod2_logr = logr.predict(df_mod2)
             st.header("La prédiction d'émission de CO2 (g/km) pour un véhicule paramétré comme celui-ci est CO2 :")
-            st.header(y_pred_mod2_logr[0])
+            st.header(round(y_pred_mod2_logr[0],2))
             # Définition des catégories basées sur les émissions de CO2
 
             # Récupérer la catégorie basée sur la prédiction
