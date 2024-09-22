@@ -367,73 +367,123 @@ X_train, X_test, y_train, y_test, ohe, oe, sc, cat_oe, donnees2013, donnees2013_
 if page == pages[3]:
     st.write("## Observons les données grâce à la Data Visualisation")
     st.write("### DataViz n°1")
-    fig = px.histogram(donnees2013, x='CO2 (G/KM)', title='Distribution des émissions de CO2')
-    fig.update_layout(xaxis_title='CO2 (G/KM)', yaxis_title='Count', bargap=0.2, template='plotly_white')
+    # Titre de l'application
+    st.title("Analyse des Émissions de CO2 par Marque en 2013")
+
+    # Histogramme comparatif par marque
+    st.header("Comparaison des Émissions de CO2 entre Différentes Marques")
+    fig = px.histogram(donnees2013, x='CO2 (G/KM)', title='Comparaison des Émissions de CO2 entre Différentes Marques en 2013',
+    labels={'MARQUE': 'MARQUE', 'CO2 (G/KM)': 'Émissions de CO2 (G/KM)'},color='MARQUE',barmode='group')
+    fig.update_layout(xaxis_title='Marque',yaxis_title='Émissions de CO2 (G/KM)',legend_title='Marque',template='plotly_white')
     st.plotly_chart(fig)
     
     
-    st.write("### DataViz N°2")
-    st.write("Cette visualisation montre la distribution des émissions de CO2 en fonction des différents types de carburants, révélant que les véhicules utilisant le carburant ES (Essence) et FE (Flexible Fuel) ont une large gamme d'émissions, tandis que les carburants comme EE (Electricité) et GL (Gaz Liquéfié) ont des émissions significativement plus faibles. Les types de carburants GH (Hybride), EH (Hybride Essence), et GN (Gaz Naturel) affichent des distributions plus restreintes, indiquant une performance environnementale plus homogène dans ces catégories.")
-    plt.figure(figsize=(10, 6))
-    sns.violinplot(x='CARBURANT', y='CO2 (G/KM)', data = donnees2013, palette='Set2')
-    plt.title('Distribution des émissions de CO2 par type de carburant')
-    plt.xlabel('Type de carburant')
-    plt.ylabel('Émissions de CO2 (g/km)')
-    plt.xticks(rotation=45)
-    st.pyplot(plt)
+     st.write("### DataViz N°2")
+    st.write("Cette visualisation montre la distribution des émissions de CO2 en fonction des différents types de carburants, révélant que les véhicules utilisant le carburant ES (Essence) et 
+    FE (Flexible Fuel) ont une large gamme d'émissions, tandis que les carburants comme EE (Electricité) et GL (Gaz Liquéfié) ont des émissions significativement plus faibles. 
+    Les types de carburants GH (Hybride), EH (Hybride Essence), et GN (Gaz Naturel) affichent des distributions plus restreintes, indiquant une performance environnementale plus homogène dans ces catégories.")
+    # Créer la figure
+    fig = go.Figure()
 
-    st.write("### DataViz N°3")
-    st.write("L'analyse du nuage de points révèle que plus la puissance du moteur est élevée et plus il consomme, plus les émissions de Co2 associées sont élevées.")
-    # Nettoyer les données
-    data_nettoyer = donnees2013.dropna(subset=['CO2 (G/KM)'])
+    # Obtenir les types de carburant uniques
+    carburants = donnees2013['CARBURANT'].unique()
 
-    # Définir les variables pour le nuage de points
-    x = data_nettoyer['PUISSANCE MAXIMALE (KW)']
-    y = data_nettoyer['CONSOMMATION MIXTE (L/100KM)']
-    co2 = data_nettoyer['CO2 (G/KM)']
-
-    # Créer le nuage de points avec Plotly
-    fig = px.scatter(data_nettoyer, x='PUISSANCE MAXIMALE (KW)', y='CONSOMMATION MIXTE (L/100KM)',
-                    color='CO2 (G/KM)', color_continuous_scale='RdBu_r', 
-                    title='Puissance maximale vs Consommation de carburant Vs CO2',
-                    labels={'PUISSANCE MAXIMALE (KW)': 'Puissance maximale du moteur (kW)', 
-                            'CONSOMMATION MIXTE (L/100KM)': 'Consommation mixte de carburant (l/100km)',
-                            'CO2 (G/KM)': 'Émissions de CO2 (g/km)'})
-
-    # Ajouter une régression linéaire
-    X = x.values.reshape(-1, 1)
-    reg = LinearRegression().fit(X, y)
-    data_nettoyer['Regression Line'] = reg.predict(X)
-
-    fig.add_trace(go.Scatter(
-        x=data_nettoyer['PUISSANCE MAXIMALE (KW)'],
-        y=data_nettoyer['Regression Line'],
-        mode='lines',
-        name='Ligne de régression',
-        line=dict(color='gray')
+    # Ajouter un tracé de violon pour chaque type de carburant
+    for carburant in carburants:
+        fig.add_trace(go.Violin(
+            x=donnees2013['CARBURANT'][donnees2013['CARBURANT'] == carburant],
+            y=donnees2013['CO2 (G/KM)'][donnees2013['CARBURANT'] == carburant],
+            name=carburant,
+            box_visible=True,
+            meanline_visible=True
     ))
+
+    # Mise à jour de la mise en page
+    fig.update_layout(
+           title='Distribution des émissions de CO2 par type de carburant',
+           xaxis_title='Type de carburant',
+           yaxis_title='Émissions de CO2 (g/km)',
+           template='plotly_white'
+)
 
     # Afficher le graphique dans Streamlit
     st.plotly_chart(fig)
 
+    st.write("### DataViz N°3")
+    # Créer le graphique de dispersion interactif
+    fig1 = px.scatter(donnees2013, x="PUISSANCE MAXIMALE (KW)", y="CO2 (G/KM)",
+                 color="CARBURANT", hover_name="MARQUE",
+                 size="MASSE VIDE EURO MAX (KG)", size_max=40,
+                 title="Émissions de CO2 en fonction de la puissance et du carburant")
+
+    # Titre de l'application Streamlit
+    st.title("Analyse des émissions de CO2")
+
+    # Afficher le graphique dans l'application Streamlit
+    st.plotly_chart(fig1)
+
     st.write("### DataViz N°4")
-    co2_by_marque = donnees2013.groupby('MARQUE')['CO2 (G/KM)'].mean().sort_values()
-    co2_by_marque = donnees2013.groupby('MARQUE')['CO2 (G/KM)'].mean().sort_values().reset_index()
-    fig = px.bar(co2_by_marque, x='CO2 (G/KM)', y='MARQUE', orientation='h',
-                title='Comparaison des émissions de CO2 par marque de véhicule',
-                labels={'CO2 (G/KM)': 'Émissions de CO2 moyennes (g/km)', 'MARQUE': 'Marque'},
-                color_discrete_sequence=['skyblue'])
-    fig.update_layout(xaxis=dict(showgrid=True, gridcolor='LightGrey'))
+    # Calculer les émissions de CO2 moyennes par marque
+    co2_by_marque = donnees2013.groupby('MARQUE')['CO2 (G/KM)'].mean().reset_index().sort_values('CO2 (G/KM)')
+
+    # Créer le diagramme à barres horizontal avec Plotly
+    fig = px.bar(co2_by_marque,
+             x='CO2 (G/KM)',
+             y='MARQUE',
+             orientation='h',
+             title='1) Comparaison des émissions de CO2 par marque de véhicule',
+             labels={'CO2 (G/KM)': 'Émissions de CO2 moyennes (g/km)',
+                     'MARQUE': 'MARQUE'},
+             color='CO2 (G/KM)',
+             color_continuous_scale='rainbow')
+
+     # Mise à jour de la mise en page
+    fig.update_layout(
+        xaxis_title='Émissions de CO2 moyennes (g/km)',
+        yaxis_title='Marque',
+        width=1000,
+        height=800,
+        yaxis={'categoryorder':'total ascending'}  # Trie les marques par ordre croissant des émissions
+)
+
+     # Ajouter une grille sur l'axe x
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
+
+    # Afficher le graphique
     st.plotly_chart(fig)
+
 
     st.write("### DataViz N°5")
     st.write("Nous observons sur ce graphique une corrélation entre la masse du véhicule et les émissions de CO2")
-    fig = px.scatter(donnees2013, x='MASSE VIDE EURO MAX (KG)', y='CO2 (G/KM)', 
+    fig = px.scatter(donnees2013, 
+                 x='MASSE VIDE EURO MAX (KG)', 
+                 y='CO2 (G/KM)',
+                 color='CO2 (G/KM)',
+                 color_continuous_scale='rainbow',  # Utilise l'échelle de couleurs rainbow
                  title="Relation entre les émissions de CO2 (G/KM) et la masse des véhicules",
-                 labels={'MASSE VIDE EURO MAX (KG)': 'Masse des véhicules (KG)', 'CO2 (G/KM)': 'Émissions de CO2 (G/KM)'},
-                 color_discrete_sequence=['#A7001E'], width=2000, height=800)
+                 labels={'MASSE VIDE EURO MAX (KG)': 'Masse des véhicules (KG)', 
+                         'CO2 (G/KM)': 'Émissions de CO2 (G/KM)'},
+                 width=2000, 
+                 height=800)
 
     fig.update_traces(marker=dict(size=6))
+
+    # Personnaliser la barre de couleurs
+    fig.update_coloraxes(colorbar_title="CO2 (G/KM)")
+
+
+
+    # Personnalisation des marqueurs
+    fig.update_traces(marker=dict(size=8))  # Augmentation de la taille des marqueurs
+
+    # Ajout d'une ligne de régression pour visualiser la tendance
+    fig.add_traces(go.Scatter(x=donnees2013['MASSE VIDE EURO MAX (KG)'],
+                        y=np.poly1d(np.polyfit(donnees2013['MASSE VIDE EURO MAX (KG)'], 
+                                             donnees2013['CO2 (G/KM)'], 1))(donnees2013['MASSE VIDE EURO MAX (KG)']),
+                        mode='lines',
+                        name='Régression linéaire'))
+
+    # Affichage du graphique dans Streamlit
     st.plotly_chart(fig)
 
     st.write("### DataViz N°6")
@@ -443,18 +493,55 @@ if page == pages[3]:
     donnees2013_cor = oe.fit_transform(donnees2013)
     donnees2013_cor  = pd.DataFrame(donnees2013_cor, columns=donnees2013.columns)
 
-    # corrélation
-    correlation_matrix = donnees2013_cor.corr()
-    fig = px.imshow(correlation_matrix, text_auto=True, color_continuous_scale='turbo', aspect='auto')
-    fig.update_layout(title='Matrice de corrélation', width=4000, height=1000)
+    
+
+    # Calcul de la matrice de corrélation
+    corr_matrix = donnees2013_cor.corr()
+
+    # Création de la figure
+    fig = go.Figure(data=go.Heatmap(
+                z=corr_matrix.values,  # Utiliser la matrice triée
+                x=corr_matrix.columns,
+                y=corr_matrix.columns,
+                colorscale='jet',
+                zmin=-1, zmax=1,
+                text=corr_matrix.round(2).values,
+                texttemplate="%{text}",
+                textfont={"size":10},
+                hoverongaps = False))
+
+    # Mise à jour de la mise en page
+    fig.update_layout(
+    title='Matrice de corrélation des variables numériques',
+    xaxis_title='Variables',
+    yaxis_title='Variables',
+    width=900,
+    height=800,
+    xaxis = dict(
+        tickangle = -45,
+        tickfont = dict(size=10),
+        tickmode = 'array',
+        tickvals = list(range(len(corr_matrix.columns))),
+        ticktext = corr_matrix.columns
+    )
+)
+
+    # Affichage de la figure
     st.plotly_chart(fig)
 
     st.write("### DataViz bonus")
     st.write("Nous finissons notre datavisualisation sur ce graphique afin d'attirer l'attention sur un déséquilibre du jeu de données. En effet, nous remarquons sans difficulté que 2 types de carburant ont le monopole. Le Gasoil pour 84,2% et l'Essence pour 13,7%.")
-    carburant_counts = donnees2013['CARBURANT'].value_counts()
-    carburant_counts_df = carburant_counts.reset_index()
-    carburant_counts_df.columns = ['CARBURANT', 'COUNT']
-    fig = px.pie(carburant_counts_df, values='COUNT', names='CARBURANT', title='Répartition des véhicules par type de carburant')
+    
+
+    # Sélection des données sur les Carburant
+    carburant_counts = donnees2013['CARBURANT'].value_counts()  # Count occurrences of each fuel type
+
+    # Création du camembert
+    #fig = px.pie(carburant_counts, names=carburant_counts.index, title="Répartition des Carburant")
+    fig = go.Figure(data=[go.Pie(labels=carburant_counts.index, values=carburant_counts)])
+    #fig.update(title="Répartition des Carburant")
+    fig.update_layout(title_text="Répartition des Carburant")
+    # Affichage du camembert
     st.plotly_chart(fig)
 
  
